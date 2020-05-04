@@ -237,6 +237,11 @@ void execute_red_logic(int curLvl, Ghost *redGhost, Pacman *pacman)
 		case 1: // Stage 1
 			tempX = rand() % 12;
 			tempY = rand() % 8;
+			if(tempX == 0 && tempY == 0)
+			{
+				tempX = 6;
+				tempY = 4;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
 			break;
 		case 2: 
 			// Red's AI is to set his target position to pacmans
@@ -284,6 +289,11 @@ void execute_pink_logic(int curLvl, Ghost *pinkGhost, Pacman *pacman)
 		case 1: // Stage 1
 			tempX = rand() % 12 + 14;
 			tempY = rand() % 8;
+			if(tempX == 25 && tempY == 0)
+			{
+				tempX = 19;
+				tempY = 4;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
 			break;
 		case 2:
 			//use dir_xy_buggy to get 4 up AND 4 left, as per bug in original game
@@ -327,14 +337,30 @@ void execute_orange_logic(int curLvl, Ghost *orangeGhost, Pacman *pacman)
 		case 1: // Stage 1
 			tempX = rand() % 12;
 			tempY = rand() % 8 + 23;
+			if(tempX == 0 && tempY == 30)
+			{
+				tempX = 6;
+				tempY = 19;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
 			break;
 		case 2:
 			tempX = rand() % 12;
 			tempY = rand() % 8 + 23;
+			if(tempX == 0 && tempY == 30)
+			{
+				tempX = 6;
+				tempY = 19;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
+
 			break;
 		case 3:
 			tempX = rand() % 24;
 			tempY = rand() % 16 + 23;
+			if(tempX == 0 && tempY >= 30)
+			{
+				tempX = 12;
+				tempY = 19;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
 			break;
 			// // Orange's logic is in two parts:
 			// // If Pacmans distance is 8 or more squares away, his target is pacman
@@ -390,10 +416,20 @@ void execute_blue_logic(int curLvl, Ghost *blueGhost, Ghost *redGhost, Pacman *p
 		case 1: // Stage 1
 			tempX = rand() % 12 + 14;
 			tempY = rand() % 8 + 23;
+			if(tempX == 25 && tempY == 30)
+			{
+				tempX = 19;
+				tempY = 19;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
 			break;
 		case 2:
 			tempX = rand() % 12 + 14;
 			tempY = rand() % 8 + 23;
+			if(tempX == 25 && tempY == 30)
+			{
+				tempX = 19;
+				tempY = 19;
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음, ADD 2020
 			break;
 		case 3:
 			offsetX = 0;
