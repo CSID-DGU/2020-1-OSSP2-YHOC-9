@@ -429,7 +429,7 @@ void execute_blue_logic(int curLvl, Ghost *blueGhost, Ghost *redGhost, Pacman *p
 			{
 				tempX = 19;
 				tempY = 19;
-			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음
+			}//구석으로 갔을 경우, 발생하는 문제를 없애기 위해 좌표를 바꾸었음, ADD 2020
 			break;
 		case 3:
 			offsetX = 0;
