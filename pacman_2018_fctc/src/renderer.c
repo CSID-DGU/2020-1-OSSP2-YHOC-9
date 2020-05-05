@@ -183,7 +183,8 @@ void draw_common_indicator(int mode, int x, int y)
 	set_text_color(WhiteText);
 	if(mode == 0) draw_text_coord(get_screen(), "@", x, y+3);
 	else if(mode == 1) draw_text_coord(get_screen(), "@", x, y+5);
-	else draw_text_coord(get_screen(), "@", x, y+7);
+	else if(mode == 2) draw_text_coord(get_screen(), "@", x, y+7);
+	else draw_text_coord(get_screen(), "@", x, y+9);
 }
 
 void draw_credits(int numCredits)

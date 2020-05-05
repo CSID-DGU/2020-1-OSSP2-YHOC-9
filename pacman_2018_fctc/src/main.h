@@ -2,7 +2,7 @@
 
 //28 across, 36 down, 16 pixels each square.
 //28 across, 40 down, 16 pixels each square.
-#define SCREEN_TITLE "Tphakumahn - ver.2018FCTC"
+#define SCREEN_TITLE "PACMAN - ver.2020YHOC"
 #define SCREEN_WIDTH 448
 #define SCREEN_HEIGHT 640 //origin : 576
 
@@ -12,14 +12,19 @@ typedef enum
 	Menu,
 	Game,
 	Remote,
-	Intermission
+	Intermission,
+
+	GameExplain,  //2020 ADD
+	CheckQuit	  //2020 ADD
 } ProgramState;
 
 typedef enum
 {
 	SoloState,
 	MultiState,
-	RemoteState
+	RemoteState,
+
+	ExplainState  //2020 ADD
 } ModeState;
 
 typedef enum
@@ -31,3 +36,10 @@ typedef enum
 
 //Returns the number of credits the user currently has.
 int num_credits(void);
+
+//2020 ADD
+typedef enum{
+	NONE,	
+	GoBack,
+	QUIT
+}STOP_GAME;
