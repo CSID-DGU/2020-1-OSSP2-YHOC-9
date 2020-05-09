@@ -65,6 +65,8 @@ static PacmanGame_socket *pac_socket;
 static bool gameRunning = true;
 static int numCredits = 0;
 
+static bool waitFlag = false; //2020 ADD
+
 int main(void)
 {
 	resource_init();
@@ -296,9 +298,14 @@ static void internal_tick(void)
 		if (menuSystem.action == ServerWait)
 		{
 			// listen client
-
-			if (connect_server(socket_info) == -1)
-				printf("Wait...\n");
+			if (connect_server(socket_info) == -1){
+				//2020 ADD
+				if(!waitFlag){
+					printf("Wait...\n");
+					waitFlag = true;
+				}	
+			}
+				
 			else
 				menuSystem.action = GoToGame;
 		}
@@ -320,7 +327,7 @@ static void internal_tick(void)
 		break;
 
 	case CheckQuit:
-		check_quit_tick(&stopGame, &state, &beforeState, &stopFlag);
+		check_quit_tick(&stopGame, &state, &beforeState, &stopFlag, &menuSystem);
 		break;
 	}
 }
@@ -529,7 +536,7 @@ static void key_down_hacks(int keycode)
 		if (keycode == SDLK_DOWN)
 		{
 			stopGame++;
-			if (stopGame > 1)
+			if (stopGame > 2)
 				stopGame = 0;
 		}
 
@@ -537,7 +544,7 @@ static void key_down_hacks(int keycode)
 		{
 			stopGame--;
 			if (stopGame == -1)
-				stopGame = 1;
+				stopGame = 2;
 		}
 	}
 

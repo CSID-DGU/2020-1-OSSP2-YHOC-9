@@ -134,7 +134,7 @@ static void draw_vanity_screen(MenuSystem *menuSystem)
 			break;
 
 		GhostDisplayRow r = enemyRows[i];
-		draw_ghost_line(&r, 13 + 3 * i, dt - current);
+		draw_ghost_line(&r, 14 + 3 * i, dt - current);
 	}
 
 	if (dt > 9500)
@@ -165,7 +165,7 @@ static void draw_remote_server_screen(MenuSystem *menuSystem)
 
 	draw_vanity_text("WAIT TO CONNECT...", 6, 17);
 
-	draw_vanity_text("@ PRESS Q EXIT", 6, 25);
+	draw_vanity_text("@ PRESS ESC TO EXIT", 6, 25);
 	//if (dt%1900 > 400) draw_vanity_text(".", 18, 17);
 	//if (dt%1900 > 900) draw_vanity_text(".", 19, 17);
 	//if (dt%1900 > 1400) draw_vanity_text(".", 20, 17);
@@ -262,21 +262,29 @@ void explain_tick()
 void draw_checkquit_screen(int check)
 {
 	draw_common_indicator(check, 6, 1);
-	draw_vanity_text("WANT TO QUIT", 9, 4);
-	draw_vanity_text("BACK TO GAME", 9, 6);
+	draw_vanity_text("QUIT", 9, 4);
+	draw_vanity_text("MENU", 9, 6);
+	draw_vanity_text("BACK", 9, 8);
 }
 
-void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag)
+void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag, MenuSystem *menuSys)
 {
 	bool startNew = key_held(SDLK_KP_ENTER) || key_held(SDLK_RETURN);
 
 	if (startNew)
-	{
-		if (*check == 0) // NONE TO QUIT
+	{	
+		//Consider Display 0~2
+		if(*check == 0) // NONE(0) -> QUIT(3)
 		{
+			*check = 3;
+		}
+		if(*check == 1) // GoMenu
+		{
+			menu_init(menuSys);
+			*beforeState = Menu;
 			*check = 2;
 		}
-		else if (*check == 1) // GOBACK TO NONE
+		if (*check == 2) // BACK
 		{
 			*state = *beforeState;
 			*stopFlag = 0;

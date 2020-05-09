@@ -8,6 +8,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <fcntl.h>
+#include <SDL/SDL.h>
 
 typedef struct
 {
