@@ -44,11 +44,17 @@ int connect_server(Socket_value *socket_info) {
 		printf("Server : Can't listening connect.\n");
 		exit(0);
 	}
-	
-	socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
-	if(socket_info->client_fd < 0) {
-		printf("Server: accept failed.\n");
-		return -1;
+
+	//2020 ADD : async socket
+	int flag = fcntl(socket_info->server_fd, F_GETFL, 0);
+	fcntl(socket_info->server_fd, F_SETFL, flag | O_NONBLOCK);
+
+	while(1){
+		socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
+		if(socket_info->client_fd == -1) {
+			//printf("Server: accept failed.\n");
+			return -1;
+		}
 	}
 	
 	return 0;

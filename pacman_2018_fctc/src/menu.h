@@ -40,4 +40,4 @@ void menu_init(MenuSystem *menuSystem);
 void draw_explain_screen(MenuSystem *menuSystem);
 void explain_tick();
 void draw_checkquit_screen(int check);
-void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag);
+void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag, MenuSystem* menuSys);

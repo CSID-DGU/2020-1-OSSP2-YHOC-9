@@ -38,8 +38,9 @@ typedef enum
 int num_credits(void);
 
 //2020 ADD
-typedef enum{
-	NONE,	
+typedef enum{	
+	NONE,
+	GoMenu,
 	GoBack,
 	QUIT
 }STOP_GAME;
