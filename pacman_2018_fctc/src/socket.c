@@ -1,4 +1,5 @@
 #include "socket.h"
+#include "window.h"
 #include <arpa/inet.h>
 
 #define SERV_IP_ADDR "127.0.0.1"
@@ -51,12 +52,19 @@ int connect_server(Socket_value *socket_info) {
 
 	while(1){
 		socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
-		if(socket_info->client_fd == -1) {
-			//printf("Server: accept failed.\n");
-			return -1;
+		if(socket_info->client_fd > 0){
+			return 0;
 		}
+
+
+		//false
+		// if(socket_info->client_fd == -1){
+		// 	return -1;
+		// }
+
+		sleep(100);
+		
 	}
-	
 	return 0;
 }
 

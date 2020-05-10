@@ -14,8 +14,9 @@ typedef enum
 	Remote,
 	Intermission,
 
-	GameExplain,  //2020 ADD
-	CheckQuit	  //2020 ADD
+	GameExplain, //2020 ADD
+	CheckQuit,
+	MakeGameRoom
 } ProgramState;
 
 typedef enum
@@ -24,7 +25,7 @@ typedef enum
 	MultiState,
 	RemoteState,
 
-	ExplainState  //2020 ADD
+	ExplainState //2020 ADD
 } ModeState;
 
 typedef enum
@@ -38,9 +39,17 @@ typedef enum
 int num_credits(void);
 
 //2020 ADD
-typedef enum{	
+typedef enum
+{
 	NONE,
 	GoMenu,
 	GoBack,
 	QUIT
-}STOP_GAME;
+} STOP_GAME;
+
+//2020 ADD multi game mode
+typedef enum
+{
+	coorperate,
+	chase
+} MultiGameMode;

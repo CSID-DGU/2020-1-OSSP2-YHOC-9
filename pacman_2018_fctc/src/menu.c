@@ -40,7 +40,7 @@ void menu_init(MenuSystem *menuSystem)
 	menuSystem->severIP = (char *)malloc(sizeof(char) * 50);
 
 	menuSystem->explainPage = 0; //2020 ADD
-
+	menuSystem->gameMode = coorperate;
 	for (int i = 0; i < 20; i++)
 		menuSystem->severIP[i] = NULL;
 }
@@ -64,7 +64,7 @@ void menu_tick(MenuSystem *menuSystem)
 	}
 }
 
-void remote_tick(MenuSystem *menuSystem, Socket_value *socket_info)
+void remote_tick(MenuSystem *menuSystem, Socket_value *socket_info, int *state)
 {
 	bool startNew = key_held(SDLK_KP_ENTER) || key_held(SDLK_RETURN);
 
@@ -74,10 +74,12 @@ void remote_tick(MenuSystem *menuSystem, Socket_value *socket_info)
 		{
 			if (menuSystem->role == Server)
 			{
-				menuSystem->action = ServerWait;
+				// menuSystem->action = ServerWait;
 
-				init_server(socket_info);
-				printf("comeon");
+				// init_server(socket_info);
+				// printf("comeon");
+				*state = MakeGameRoom;
+				menuSystem->action = MakeGame;
 			}
 			else if (menuSystem->role == Client)
 			{
@@ -153,8 +155,8 @@ static void draw_remote_choice_screen(MenuSystem *menuSystem)
 		draw_common_indicator(Server, 4, 12);
 	else
 		draw_common_indicator(menuSystem->role, 4, 12);
-	draw_vanity_text("CONNECT SERVER", 7, 17);
-	draw_vanity_text("CONNECT CLIENT", 7, 19);
+	draw_vanity_text("MAKE GAME", 7, 17);
+	draw_vanity_text("JOIN GAME", 7, 19);
 }
 
 static void draw_remote_server_screen(MenuSystem *menuSystem)
@@ -224,16 +226,16 @@ void draw_explain_screen(MenuSystem *menuSystem)
 	{
 		draw_vanity_text("GAME ", 7, 3);
 
-		draw_vanity_text("THE PACMAN HAVE TO EAT",1,7);
-		draw_vanity_text("PELLETS OF COOKIE WITHIN",1,9);
-		draw_vanity_text("THE NUMBER OF LIVES",1,11);
-		draw_vanity_text("AVOIDING GHOSTS !!",2,15);
-		draw_vanity_text("PLAYER 1",1,19);
-		draw_vanity_text("@ UP @ DOWN @ LEFT @ RIGHT",1,21);
-		draw_vanity_text("PLAYER 2",1,23);
-		draw_vanity_text("@ W @ S @ A @ D",1,25);
-		draw_vanity_text("CONTROLL CAREFULLY!",1,27);
-		draw_vanity_text("PACMAN KEEPS GOING!",1,29);
+		draw_vanity_text("THE PACMAN HAVE TO EAT", 1, 7);
+		draw_vanity_text("PELLETS OF COOKIE WITHIN", 1, 9);
+		draw_vanity_text("THE NUMBER OF LIVES", 1, 11);
+		draw_vanity_text("AVOIDING GHOSTS !!", 2, 15);
+		draw_vanity_text("PLAYER 1", 1, 19);
+		draw_vanity_text("@ UP @ DOWN @ LEFT @ RIGHT", 1, 21);
+		draw_vanity_text("PLAYER 2", 1, 23);
+		draw_vanity_text("@ W @ S @ A @ D", 1, 25);
+		draw_vanity_text("CONTROLL CAREFULLY!", 1, 27);
+		draw_vanity_text("PACMAN KEEPS GOING!", 1, 29);
 
 		draw_vanity_text("@ PRESS NEXT", 6, 33);
 	}
@@ -241,15 +243,15 @@ void draw_explain_screen(MenuSystem *menuSystem)
 	{
 		draw_vanity_text("EXPLAIN TIP", 7, 3);
 
-		draw_vanity_text("BIG PELLET OF COOKIE",1,7);
-		draw_vanity_text("CAN ALLOW THE PACMAN",2,9);
-		draw_vanity_text("TO IGNORE THE GHOSTS",3,11);
-		draw_vanity_text("THE FRIUT HAS SPECIAL SCORE",1,15);
-		draw_vanity_text("WE PREPARED SOME ITEMS",1,17);
-		draw_vanity_text("USE WISELY!",1,19);
-		
-		draw_vanity_text("IN MULTI MODE !",7,23);
-		draw_vanity_text("YOU MAY COMPETE A PARTNER",1,27);
+		draw_vanity_text("BIG PELLET OF COOKIE", 1, 7);
+		draw_vanity_text("CAN ALLOW THE PACMAN", 2, 9);
+		draw_vanity_text("TO IGNORE THE GHOSTS", 3, 11);
+		draw_vanity_text("THE FRIUT HAS SPECIAL SCORE", 1, 15);
+		draw_vanity_text("WE PREPARED SOME ITEMS", 1, 17);
+		draw_vanity_text("USE WISELY!", 1, 19);
+
+		draw_vanity_text("IN MULTI MODE !", 7, 23);
+		draw_vanity_text("YOU MAY COMPETE A PARTNER", 1, 27);
 
 		draw_vanity_text("@ PRESS GOTO MENU", 6, 33);
 	}
@@ -267,18 +269,18 @@ void draw_checkquit_screen(int check)
 	draw_vanity_text("BACK", 9, 8);
 }
 
-void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag, MenuSystem *menuSys)
+void check_quit_tick(int *check, int *state, int *beforeState, int *stopFlag, MenuSystem *menuSys)
 {
 	bool startNew = key_held(SDLK_KP_ENTER) || key_held(SDLK_RETURN);
 
 	if (startNew)
-	{	
+	{
 		//Consider Display 0~2
-		if(*check == 0) // NONE(0) -> QUIT(3)
+		if (*check == 0) // NONE(0) -> QUIT(3)
 		{
 			*check = 3;
 		}
-		if(*check == 1) // GoMenu
+		if (*check == 1) // GoMenu
 		{
 			menu_init(menuSys);
 			*beforeState = Menu;
@@ -289,6 +291,36 @@ void check_quit_tick(int *check, int *state,int *beforeState, int* stopFlag, Men
 			*state = *beforeState;
 			*stopFlag = 0;
 			*check = 0;
+		}
+
+		handle_keyup(SDLK_KP_ENTER);
+		handle_keyup(SDLK_RETURN);
+	}
+}
+
+void draw_makegame_screen(MenuSystem *menuSystem)
+{
+	draw_common_indicator(menuSystem->gameMode, 6, 1);
+	draw_vanity_text("COOPERATE MODE", 7, 4);
+	draw_vanity_text("CHASE MODE", 7, 6);
+}
+
+void makegame_tick(MenuSystem *menuSystem, Socket_value *socket_info, int *state)
+{
+	bool startNew = key_held(SDLK_KP_ENTER) || key_held(SDLK_RETURN);
+
+	if (startNew)
+	{
+		if (menuSystem->gameMode == coorperate)
+		{ // base game
+			menuSystem->action = ServerWait;
+			*state = Remote;
+			init_server(socket_info);
+			printf("comeon");
+		}
+		else
+		{ //chase game
+			printf("test game menu");
 		}
 
 		handle_keyup(SDLK_KP_ENTER);

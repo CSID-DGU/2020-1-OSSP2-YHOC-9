@@ -53,7 +53,7 @@ static MenuSystem menuSystem;
 static PacmanGame pacmanGame;
 static PacmanGame *pac;
 
-//2020 ADD GAME STOP  
+//2020 ADD GAME STOP
 static STOP_GAME stopGame;
 static int beforeState;
 static int stopFlag;
@@ -89,14 +89,12 @@ static void main_loop(void)
 		{
 			if (stopFlag == 0)
 			{
-				beforeState = state; 
+				beforeState = state;
 				stopFlag = 1;
 			}
-			printf("Press ESC\n");
 			state = CheckQuit;
 		}
 
-		
 		if (state == Game && pacmanGame.mode == MultiState)
 		{
 			process_events(Two);
@@ -109,7 +107,6 @@ static void main_loop(void)
 		{
 			process_events(One);
 		}
-
 
 		internal_tick();
 		internal_render();
@@ -237,49 +234,55 @@ static void internal_tick(void)
 	case Game:
 		if (pacmanGame.mode == RemoteState)
 		{
-			if (menuSystem.role == Server)
+			if (menuSystem.gameMode == coorperate)
 			{
-
-				KeyState key_info;
-				recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
-				store_enemy_keysinfo(&key_info);
-
-				game_tick(&pacmanGame);
-
-				pacmanGame.tick = ticks_game();
-				pac_socket = (PacmanGame_socket *)malloc(sizeof(PacmanGame_socket));
-				copy_pac_socket_info();
-
-				send(socket_info->client_fd, (char *)pac_socket, sizeof(PacmanGame_socket), 0);
-			}
-			else if (menuSystem.role == Client)
-			{
-
-				KeyState key_info;
-				keyinfo_store(&key_info);
-				send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
-
-				pac_socket = (PacmanGame_socket *)malloc(sizeof(PacmanGame_socket));
-				recv(socket_info->client_fd, (char *)pac_socket, sizeof(PacmanGame_socket), MSG_WAITALL);
-
-				copy_pacmanGame_info();
-			}
-
-			int flag = 0;
-			if (is_game_over(&pacmanGame, pacmanGame.tick))
-			{
-				menu_init(&menuSystem);
-				state = Menu;
-				pacmanGame.role = None;
-				flag = 1;
-			}
-			if (flag == 1)
-			{
-				printf("socket reset!\n");
-				close(socket_info->client_fd);
 				if (menuSystem.role == Server)
-					close(socket_info->server_fd);
-				free(socket_info);
+				{
+
+					KeyState key_info;
+					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
+					store_enemy_keysinfo(&key_info);
+
+					game_tick(&pacmanGame);
+
+					pacmanGame.tick = ticks_game();
+					pac_socket = (PacmanGame_socket *)malloc(sizeof(PacmanGame_socket));
+					copy_pac_socket_info();
+
+					send(socket_info->client_fd, (char *)pac_socket, sizeof(PacmanGame_socket), 0);
+				}
+				else if (menuSystem.role == Client)
+				{
+
+					KeyState key_info;
+					keyinfo_store(&key_info);
+					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
+
+					pac_socket = (PacmanGame_socket *)malloc(sizeof(PacmanGame_socket));
+					recv(socket_info->client_fd, (char *)pac_socket, sizeof(PacmanGame_socket), MSG_WAITALL);
+
+					copy_pacmanGame_info();
+				}
+
+				int flag = 0;
+				if (is_game_over(&pacmanGame, pacmanGame.tick))
+				{
+					menu_init(&menuSystem);
+					state = Menu;
+					pacmanGame.role = None;
+					flag = 1;
+				}
+				if (flag == 1)
+				{
+					printf("socket reset!\n");
+					close(socket_info->client_fd);
+					if (menuSystem.role == Server)
+						close(socket_info->server_fd);
+					free(socket_info);
+				}
+			}
+			else
+			{ //chaising mode
 			}
 		}
 		else
@@ -298,19 +301,21 @@ static void internal_tick(void)
 		if (menuSystem.action == ServerWait)
 		{
 			// listen client
-			if (connect_server(socket_info) == -1){
+			if (connect_server(socket_info) == -1)
+			{
 				//2020 ADD
-				if(!waitFlag){
+				if (!waitFlag)
+				{
 					printf("Wait...\n");
 					waitFlag = true;
-				}	
+				}
 			}
-				
+
 			else
 				menuSystem.action = GoToGame;
 		}
 
-		remote_tick(&menuSystem, socket_info);
+		remote_tick(&menuSystem, socket_info, &state);
 		if (menuSystem.action == GoToGame)
 		{
 			state = Game;
@@ -324,6 +329,10 @@ static void internal_tick(void)
 	//2020 ADD
 	case GameExplain:
 		explain_tick();
+		break;
+	case MakeGameRoom:
+		makegame_tick(&menuSystem, socket_info, &state);
+
 		break;
 
 	case CheckQuit:
@@ -342,11 +351,16 @@ static void internal_render(void)
 		menu_render(&menuSystem);
 		break;
 	case Game:
-		if (menuSystem.role == Client)
-			game_render(&pacmanGame, pacmanGame.tick);
+		if (menuSystem.gameMode == coorperate)
+		{
+			if (menuSystem.role == Client)
+				game_render(&pacmanGame, pacmanGame.tick);
+			else
+				game_render(&pacmanGame, ticks_game());
+		}
 		else
-			game_render(&pacmanGame, ticks_game());
-
+		{
+		}
 		break;
 	case Remote:
 		remote_render(&menuSystem);
@@ -361,6 +375,9 @@ static void internal_render(void)
 		break;
 	case CheckQuit:
 		draw_checkquit_screen(stopGame);
+		break;
+	case MakeGameRoom:
+		draw_makegame_screen(&menuSystem);
 		break;
 	}
 
@@ -393,11 +410,17 @@ static void game_init(void)
 
 static void startgame_init(void)
 {
-	if (menuSystem.role == Server)
-		pacmanGame.role = Server;
-	else if (menuSystem.role == Client)
-		pacmanGame.role = Client;
-	gamestart_init(&pacmanGame, menuSystem.mode);
+	if (menuSystem.gameMode == coorperate)
+	{
+		if (menuSystem.role == Server)
+			pacmanGame.role = Server;
+		else if (menuSystem.role == Client)
+			pacmanGame.role = Client;
+		gamestart_init(&pacmanGame, menuSystem.mode);
+	}
+	else
+	{
+	}
 }
 
 static void resource_init(void)
@@ -545,6 +568,22 @@ static void key_down_hacks(int keycode)
 			stopGame--;
 			if (stopGame == -1)
 				stopGame = 2;
+		}
+	}
+	else if (state == MakeGameRoom)
+	{
+		if (keycode == SDLK_DOWN)
+		{
+			menuSystem.gameMode++;
+			if (menuSystem.gameMode > 1)
+				menuSystem.gameMode = 0;
+		}
+
+		if (keycode == SDLK_UP)
+		{
+			menuSystem.gameMode--;
+			if (menuSystem.gameMode == -1)
+				menuSystem.gameMode = 1;
 		}
 	}
 
