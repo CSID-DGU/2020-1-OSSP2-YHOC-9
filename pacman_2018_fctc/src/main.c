@@ -17,6 +17,9 @@
 #include "text.h"
 #include "window.h"
 #include "pellet.h"
+
+#include "game2_chase.h"
+
 // Remote Play 모드에서 정보를 받아옴
 static void copy_pacmanGame_info(void);
 static void copy_pac_socket_info(void);
@@ -53,6 +56,9 @@ static MenuSystem menuSystem;
 static PacmanGame pacmanGame;
 static PacmanGame *pac;
 
+static PacmanGame2 pacmanGame2;
+static PacmanGame2 *pac2;
+
 //2020 ADD GAME STOP
 static STOP_GAME stopGame;
 static int beforeState;
@@ -60,7 +66,10 @@ static int stopFlag;
 
 // Socket value
 static Socket_value *socket_info;
+//game mode 1
 static PacmanGame_socket *pac_socket;
+//game mode 2
+static PacmanGame_socket *pac_socket2;
 
 static bool gameRunning = true;
 static int numCredits = 0;
@@ -159,6 +168,37 @@ static void copy_pac_socket_info()
 			pac_socket->pelletHolder.pellets[i].image = small_pellet_image();
 	}
 }
+static void copy_pac_socket_info2()
+{
+	pac_socket2->death_player = pacmanGame2.death_player;
+	pac_socket2->tick = pacmanGame2.tick;
+	pac_socket2->gameState = pacmanGame2.gameState2;
+	pac_socket2->ticksSinceModeChange = pacmanGame2.ticksSinceModeChange;
+	pac_socket2->highscore = pacmanGame2.highscore;
+	pac_socket2->stageLevel = pacmanGame2.stageLevel;
+	pac_socket2->currentLevel = pacmanGame2.currentLevel;
+	pac_socket2->mode = pacmanGame2.mode;
+
+	pac_socket2->pacman = pacmanGame2.pacman;
+	pac_socket2->pacman_enemy = pacmanGame2.pacman_enemy;
+
+	pac_socket2->pelletHolder.pelletNumOfCurrentMap = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
+	pac_socket2->pelletHolder.numLeft = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].numLeft;
+	pac_socket2->pelletHolder.totalNum = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum;
+
+	int pellet_num = pac_socket->pelletHolder.pelletNumOfCurrentMap;
+	for (int i = 0; i < NUM_PELLETS; i++)
+	{
+		pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
+		pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
+		pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
+		pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
+		if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
+			pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
+		else
+			pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
+	}
+}
 
 static void copy_pacmanGame_info(void)
 {
@@ -208,6 +248,41 @@ static void copy_pacmanGame_info(void)
 	}
 }
 
+static void copy_pacmanGame_info2(void)
+{
+	pacmanGame2.death_player = pac_socket2->death_player;
+	pacmanGame2.tick = pac_socket2->tick;
+	pacmanGame2.gameState2 = pac_socket2->gameState;
+	pacmanGame2.ticksSinceModeChange = pac_socket2->ticksSinceModeChange;
+	pacmanGame2.highscore = pac_socket2->highscore;
+
+	pacmanGame2.stageLevel = pac_socket2->stageLevel;
+	pacmanGame2.currentLevel = pac_socket2->currentLevel;
+
+	pacmanGame2.mode = pac_socket2->mode;
+
+	pacmanGame2.pacman = pac_socket2->pacman;
+	pacmanGame2.pacman_enemy = pac_socket2->pacman_enemy;
+
+	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap = pac_socket2->pelletHolder.pelletNumOfCurrentMap;
+	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].numLeft = pac_socket2->pelletHolder.numLeft;
+	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum = pac_socket2->pelletHolder.totalNum;
+
+	int pellet_num = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
+	for (int i = 0; i < NUM_PELLETS; i++)
+	{
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
+
+		if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
+			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
+		else
+			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
+	}
+}
+
 static void internal_tick(void)
 {
 	switch (state)
@@ -234,7 +309,7 @@ static void internal_tick(void)
 	case Game:
 		if (pacmanGame.mode == RemoteState)
 		{
-			if (menuSystem.gameMode == coorperate)
+			if (menuSystem.gameMode == coorperate) // original
 			{
 				if (menuSystem.role == Server)
 				{
@@ -281,18 +356,76 @@ static void internal_tick(void)
 					free(socket_info);
 				}
 			}
-			else
-			{ //chaising mode
+			else // chasing
+			{
+				printf("chaser tick in main\n");
+				if (menuSystem.role == Server)
+				{
+
+					KeyState key_info;
+					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
+					store_enemy_keysinfo(&key_info);
+
+					game_tick2(&pacmanGame2);
+
+					pacmanGame2.tick = ticks_game();
+					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
+					copy_pac_socket_info2();
+
+					send(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), 0);
+				}
+				else if (menuSystem.role == Client)
+				{
+
+					KeyState key_info;
+					keyinfo_store(&key_info);
+					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
+
+					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
+					recv(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), MSG_WAITALL);
+
+					copy_pacmanGame_info2();
+				}
+
+				int flag = 0;
+				if (is_game_over2(&pacmanGame2, pacmanGame2.tick))
+				{
+					menu_init(&menuSystem);
+					state = Menu;
+					pacmanGame2.role = None;
+					flag = 1;
+				}
+				if (flag == 1)
+				{
+					printf("socket reset!\n");
+					close(socket_info->client_fd);
+					if (menuSystem.role == Server)
+						close(socket_info->server_fd);
+					free(socket_info);
+				}
 			}
 		}
 		else
 		{
-			game_tick(&pacmanGame);
-
-			if (is_game_over(&pacmanGame, ticks_game()))
+			if (menuSystem.gameMode == coorperate)
 			{
-				menu_init(&menuSystem);
-				state = Menu;
+				game_tick(&pacmanGame);
+
+				if (is_game_over(&pacmanGame, ticks_game()))
+				{
+					menu_init(&menuSystem);
+					state = Menu;
+				}
+			}
+			else
+			{
+				game_tick2(&pacmanGame2);
+
+				if (is_game_over2(&pacmanGame2, ticks_game()))
+				{
+					menu_init(&menuSystem);
+					state = Menu;
+				}
 			}
 		}
 
@@ -310,7 +443,6 @@ static void internal_tick(void)
 					waitFlag = true;
 				}
 			}
-
 			else
 				menuSystem.action = GoToGame;
 		}
@@ -360,6 +492,11 @@ static void internal_render(void)
 		}
 		else
 		{
+			printf("game 2 render in main\n");
+			if (menuSystem.role == Client)
+				game_render2(&pacmanGame2, pacmanGame2.tick);
+			else
+				game_render2(&pacmanGame2, ticks_game());
 		}
 		break;
 	case Remote:
@@ -412,6 +549,7 @@ static void startgame_init(void)
 {
 	if (menuSystem.gameMode == coorperate)
 	{
+		printf("into game 1\n");
 		if (menuSystem.role == Server)
 			pacmanGame.role = Server;
 		else if (menuSystem.role == Client)
@@ -420,6 +558,12 @@ static void startgame_init(void)
 	}
 	else
 	{
+		printf("into game 2\n");
+		if (menuSystem.role == Server)
+			pacmanGame2.role = Server;
+		else if (menuSystem.role == Client)
+			pacmanGame2.role = Client;
+		gamestart_init2(&pacmanGame2, menuSystem.mode);
 	}
 }
 

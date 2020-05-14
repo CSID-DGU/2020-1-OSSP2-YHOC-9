@@ -9,6 +9,18 @@ void pacman_init(Pacman *pacman)
 	pacman->missedFrames = 0;
 	pacman->godMode = false;
 	pacman->itemOn = false;
+	printf("original\n");
+}
+
+void pacman_chaser_init(Pacman *pacman){
+		pacman_location_init(pacman);
+	pacman->score = 0;
+	pacman->livesLeft = 3;
+	pacman->itemRemainTime = 0;
+	pacman->missedFrames = 0;
+	pacman->godMode = false;
+	pacman->itemOn = false;
+	printf("chaser\n");
 }
 
 void pacman_level_init(Pacman *pacman)

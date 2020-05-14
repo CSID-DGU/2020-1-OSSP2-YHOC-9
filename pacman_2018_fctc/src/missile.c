@@ -14,7 +14,6 @@ void missiles_init(Missile missiles[2])
 	{
 		reset_missile(&missiles[i], missiles[i].missileType);
 	}
-	
 	srand(time(NULL));
 }
 

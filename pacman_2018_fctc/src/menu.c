@@ -94,8 +94,12 @@ void remote_tick(MenuSystem *menuSystem, Socket_value *socket_info, int *state)
 			if (connect_client(socket_info, menuSystem->severIP) == -1)
 				for (int i = 0; i < 20; i++)
 					menuSystem->severIP[i] = NULL;
-			else
+			else{
 				menuSystem->action = GoToGame;
+
+				//client get gamemode from server
+				menuSystem->gameMode = socket_info->gameMode;
+			}
 		}
 
 		handle_keyup(SDLK_KP_ENTER);
@@ -315,12 +319,13 @@ void makegame_tick(MenuSystem *menuSystem, Socket_value *socket_info, int *state
 		{ // base game
 			menuSystem->action = ServerWait;
 			*state = Remote;
-			init_server(socket_info);
-			printf("comeon");
+			init_server(socket_info,menuSystem->gameMode);
 		}
 		else
 		{ //chase game
-			printf("test game menu");
+			menuSystem->action = ServerWait;
+			*state = Remote;
+			init_server(socket_info,menuSystem->gameMode);
 		}
 
 		handle_keyup(SDLK_KP_ENTER);
