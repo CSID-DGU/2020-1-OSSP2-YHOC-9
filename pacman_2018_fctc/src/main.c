@@ -190,6 +190,7 @@ static void copy_pac_socket_info()
 }
 static void copy_pac_socket_info2()
 {
+	//printf("copy_pac_socket2 start\n");
 	pac_socket2->death_player = pacmanGame2.death_player;
 	pac_socket2->tick = pacmanGame2.tick;
 	pac_socket2->gameState = pacmanGame2.gameState2;
@@ -198,26 +199,28 @@ static void copy_pac_socket_info2()
 	pac_socket2->stageLevel = pacmanGame2.stageLevel;
 	pac_socket2->currentLevel = pacmanGame2.currentLevel;
 	pac_socket2->mode = pacmanGame2.mode;
-
+	//puts("1");
 	pac_socket2->pacman = pacmanGame2.pacman;
 	pac_socket2->pacman_enemy = pacmanGame2.pacman_enemy;
-
+	//puts("2");
 	pac_socket2->pelletHolder.pelletNumOfCurrentMap = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
 	pac_socket2->pelletHolder.numLeft = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].numLeft;
 	pac_socket2->pelletHolder.totalNum = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum;
-
-	int pellet_num = pac_socket->pelletHolder.pelletNumOfCurrentMap;
-	for (int i = 0; i < NUM_PELLETS; i++)
-	{
-		pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
-		pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
-		pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
-		pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
-		if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
-			pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
-		else
-			pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
-	}
+	//puts("3");
+	int pellet_num = pac_socket2->pelletHolder.pelletNumOfCurrentMap;
+	//puts("4");
+	// for (int i = 0; i < NUM_PELLETS; i++)
+	// {
+	// 	pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
+	// 	pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
+	// 	pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
+	// 	pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
+	// 	if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
+	// 		pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
+	// 	else
+	// 		pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
+	// }
+	//printf("copy_pac_socket2 end\n");
 }
 
 static void copy_pacmanGame_info(void)
@@ -289,18 +292,18 @@ static void copy_pacmanGame_info2(void)
 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum = pac_socket2->pelletHolder.totalNum;
 
 	int pellet_num = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
-	for (int i = 0; i < NUM_PELLETS; i++)
-	{
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
+	// for (int i = 0; i < NUM_PELLETS; i++)
+	// {
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
 
-		if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
-			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
-		else
-			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
-	}
+	// 	if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
+	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
+	// 	else
+	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
+	// }
 }
 
 static void internal_tick(void)
@@ -327,13 +330,12 @@ static void internal_tick(void)
 
 		break;
 	case Game:
-		if (pacmanGame.mode == RemoteState)
+		if (pacmanGame.mode == RemoteState || pacmanGame2.mode == RemoteState)
 		{
 			if (menuSystem.gameMode == coorperate) // original
 			{
 				if (menuSystem.role == Server)
 				{
-
 					KeyState key_info;
 					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
 					store_enemy_keysinfo(&key_info);
@@ -348,7 +350,6 @@ static void internal_tick(void)
 				}
 				else if (menuSystem.role == Client)
 				{
-
 					KeyState key_info;
 					keyinfo_store(&key_info);
 					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
@@ -379,29 +380,31 @@ static void internal_tick(void)
 			{
 				if (menuSystem.role == Server)
 				{
-
+					//printf("server\n");
 					KeyState key_info;
 					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
 					store_enemy_keysinfo(&key_info);
-
+					//printf("enemy key info\n");
 					game_tick2(&pacmanGame2);
+					//printf("game_tick2\n");
 
 					pacmanGame2.tick = ticks_game();
+					//printf("tick game2\n");
 					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
 					copy_pac_socket_info2();
-
+					//printf("copy pac socket \n");
 					send(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), 0);
 				}
 				else if (menuSystem.role == Client)
 				{
-
+					//printf("client\n");
 					KeyState key_info;
 					keyinfo_store(&key_info);
 					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
-
+					//printf("send client info\n");
 					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
 					recv(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), MSG_WAITALL);
-
+					//printf("recieve server data\n");
 					copy_pacmanGame_info2();
 				}
 
