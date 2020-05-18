@@ -1,6 +1,10 @@
 #include "window.h"
 
+#define SCREEN_WID 448
+#define SCREEN_HEI 640
+
 static SDL_Surface *screen;
+static SDL_ResizeEvent event_w;
 
 bool init_window(const char* title, int width, int height)
 {
@@ -9,7 +13,7 @@ bool init_window(const char* title, int width, int height)
 		return false;
 	}
 
-	screen = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE | SDL_RESIZABLE);
 
 	if (screen == NULL)
 	{
@@ -41,9 +45,16 @@ void clear_screen(int r, int g, int b, int a)
 void apply_surface(int x, int y, SDL_Surface* source)
 {
 	SDL_Rect offset;
-
-	offset.x = x;
-	offset.y = y;
+	if(event_w.w != 0 || event_w.h != 0)
+	{
+		offset.x = (event_w.w / SCREEN_WID) * x;
+		offset.y = (event_w.h / SCREEN_HEI) * y;
+	}
+	else
+	{
+		offset.x = x;
+		offset.y = y;
+	}
 	
 	SDL_BlitSurface(source, NULL, screen, &offset);
 }
