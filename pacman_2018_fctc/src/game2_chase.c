@@ -21,6 +21,7 @@ static void process_player2(Pacman *pacman, Board *board, Player2 Player2);
 static void process_pellets2(PacmanGame2 *game);
 static void process_missiles2(PacmanGame2 *game);
 static bool check_pacghost_collision2(PacmanGame2 *game);     //return true if pacman collided with any ghosts
+static bool check_pacchaser_collision2(PacmanGame2 *game);
 static bool check_ghomissile_collision2(PacmanGame2 *game);
 static void enter_state2(PacmanGame2 *game, GameState2 state); //transitions to/ from a state
 static bool resolve_telesquare2(PhysicsBody *body);          //wraps the body around if they've gone tele square
@@ -100,8 +101,8 @@ void game_tick2(PacmanGame2 *game)
 	// State Transitions - refer to gameflow for descriptions
 	//
 
-	//bool allPelletsEaten = game->pelletHolder[game->stageLevel].numLeft == 0;
-	//bool collidedWithGhost = check_pacghost_collision2(game);
+	bool allPelletsEaten = game->pelletHolder[game->stageLevel].numLeft == 0;
+	bool collidedWithchaser = check_pacchaser_collision2(game);
 	bool collidedWithMissile = check_ghomissile_collision2(game);
 	
 	int lives = game->pacman.livesLeft;
@@ -126,8 +127,8 @@ void game_tick2(PacmanGame2 *game)
 
 			//TODO: remove this hacks
 			if (key_held(SDLK_k)) enter_state2(game, DeathState2);
-			//else if (allPelletsEaten) enter_state2(game, WinState2);
-			//else if (collidedWithGhost) enter_state2(game, DeathState2);
+			else if (allPelletsEaten) enter_state2(game, WinState2);
+			else if (collidedWithchaser) enter_state2(game, DeathState2);
 			break;
 		case WinState2:
 			//if (transitionLevel) //do transition here
@@ -703,8 +704,51 @@ static void process_pellets2(PacmanGame2 *game)
 	//maybe next time, poor pacman
 }
 //change must
-static bool check_pacghost_collision2(PacmanGame2 *game)
+static bool check_pacchaser_collision2(PacmanGame2 *game)
 {
+	if(collides(&game->pacman.body,&game->pacman_enemy.body)){
+		return true;
+	}
+		
+
+		
+	// 	if(pac->protect == 0 && pac->livesLeft != -1) {
+	// 		if (collides(&game->pacman.body, &g->body)) {
+	// 			if(game->pacman.godMode == false){
+	// 				death_player = One;
+	// 				game->death_player = One;
+	// 				return true;
+	// 			}
+	// 			else {
+	// 				if(g->isDead == 2) { death_player = One; return true;}
+	// 				play_sound(SirenSound);
+	// 				g->isDead = 1;
+	// 				death_send(g);
+	// 			}
+	// 		}
+
+	// 	}
+		
+
+	// 	pac = &game->pacman_enemy;
+	// 	if(pac->protect == 0 && pac->livesLeft != -1) {
+	// 		if(game->mode != SoloState){
+	// 			if (collides(&game->pacman_enemy.body, &g->body)) {
+	// 				if(game->pacman_enemy.godMode == false){
+	// 					death_player = Two;
+	// 					game->death_player = Two;
+	// 					return true;
+	// 				}
+	// 				else {
+	// 					if(g->isDead == 2) { death_player = Two; return true;}
+	// 				play_sound(SirenSound);
+	// 					g->isDead = 1;
+	// 					death_send(g);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return false;
 }
 
@@ -749,8 +793,8 @@ void gamestart_init2(PacmanGame2 *game, int mode)
 void level_init2(PacmanGame2 *game)
 {
 	//reset pacmans position
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,2);
 	
 	//reset pellets
 	pellets_init(&game->pelletHolder[game->stageLevel]);
@@ -759,8 +803,8 @@ void level_init2(PacmanGame2 *game)
 
 void pacdeath_init2(PacmanGame2 *game)
 {
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,2);
 	missiles_init(game->missiles);
 }
 

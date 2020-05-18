@@ -1560,8 +1560,8 @@ void gamestart_init(PacmanGame *game, int mode)
 void level_init(PacmanGame *game)
 {
 	//reset pacmans position
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,1);
 	
 	//reset pellets
 	printf("level_init : %d\n", game->stageLevel);
@@ -1581,8 +1581,8 @@ void level_init(PacmanGame *game)
 
 void pacdeath_init(PacmanGame *game)
 {
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,1);
 	ghosts_init(game->ghosts);
 	missiles_init(game->missiles);
 	reset_item(&game->gameItem1[game->stageLevel], &game->board[game->stageLevel]);
