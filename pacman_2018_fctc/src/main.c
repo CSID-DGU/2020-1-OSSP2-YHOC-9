@@ -23,6 +23,8 @@
 // Remote Play 모드에서 정보를 받아옴
 static void copy_pacmanGame_info(void);
 static void copy_pac_socket_info(void);
+static void copy_pacmanGame_info2(void);
+static void copy_pac_socket_info2(void);
 
 //Initializes all resources.
 static void resource_init(void);
@@ -104,17 +106,35 @@ static void main_loop(void)
 			state = CheckQuit;
 		}
 
-		if (state == Game && pacmanGame.mode == MultiState)
+		if (menuSystem.gameMode == coorperate)
 		{
-			process_events(Two);
-		}
-		else if (state == Game && pacmanGame.mode == RemoteState)
-		{
-			process_events(Two);
+			if (state == Game && pacmanGame.mode == MultiState)
+			{
+				process_events(Two);
+			}
+			else if (state == Game && pacmanGame.mode == RemoteState)
+			{
+				process_events(Two);
+			}
+			else
+			{
+				process_events(One);
+			}
 		}
 		else
 		{
-			process_events(One);
+			if (state == Game && pacmanGame2.mode == MultiState)
+			{
+				process_events(Two);
+			}
+			else if (state == Game && pacmanGame2.mode == RemoteState)
+			{
+				process_events(Two);
+			}
+			else
+			{
+				process_events(One);
+			}
 		}
 
 		internal_tick();
@@ -170,6 +190,7 @@ static void copy_pac_socket_info()
 }
 static void copy_pac_socket_info2()
 {
+	//printf("copy_pac_socket2 start\n");
 	pac_socket2->death_player = pacmanGame2.death_player;
 	pac_socket2->tick = pacmanGame2.tick;
 	pac_socket2->gameState = pacmanGame2.gameState2;
@@ -178,26 +199,28 @@ static void copy_pac_socket_info2()
 	pac_socket2->stageLevel = pacmanGame2.stageLevel;
 	pac_socket2->currentLevel = pacmanGame2.currentLevel;
 	pac_socket2->mode = pacmanGame2.mode;
-
+	//puts("1");
 	pac_socket2->pacman = pacmanGame2.pacman;
 	pac_socket2->pacman_enemy = pacmanGame2.pacman_enemy;
-
+	//puts("2");
 	pac_socket2->pelletHolder.pelletNumOfCurrentMap = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
 	pac_socket2->pelletHolder.numLeft = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].numLeft;
 	pac_socket2->pelletHolder.totalNum = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum;
-
-	int pellet_num = pac_socket->pelletHolder.pelletNumOfCurrentMap;
-	for (int i = 0; i < NUM_PELLETS; i++)
-	{
-		pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
-		pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
-		pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
-		pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
-		if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
-			pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
-		else
-			pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
-	}
+	//puts("3");
+	int pellet_num = pac_socket2->pelletHolder.pelletNumOfCurrentMap;
+	//puts("4");
+	// for (int i = 0; i < NUM_PELLETS; i++)
+	// {
+	// 	pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
+	// 	pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
+	// 	pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
+	// 	pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
+	// 	if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
+	// 		pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
+	// 	else
+	// 		pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
+	// }
+	//printf("copy_pac_socket2 end\n");
 }
 
 static void copy_pacmanGame_info(void)
@@ -269,18 +292,18 @@ static void copy_pacmanGame_info2(void)
 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum = pac_socket2->pelletHolder.totalNum;
 
 	int pellet_num = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
-	for (int i = 0; i < NUM_PELLETS; i++)
-	{
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
-		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
+	// for (int i = 0; i < NUM_PELLETS; i++)
+	// {
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
+	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
 
-		if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
-			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
-		else
-			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
-	}
+	// 	if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
+	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
+	// 	else
+	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
+	// }
 }
 
 static void internal_tick(void)
@@ -307,13 +330,12 @@ static void internal_tick(void)
 
 		break;
 	case Game:
-		if (pacmanGame.mode == RemoteState)
+		if (pacmanGame.mode == RemoteState || pacmanGame2.mode == RemoteState)
 		{
 			if (menuSystem.gameMode == coorperate) // original
 			{
 				if (menuSystem.role == Server)
 				{
-
 					KeyState key_info;
 					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
 					store_enemy_keysinfo(&key_info);
@@ -328,7 +350,6 @@ static void internal_tick(void)
 				}
 				else if (menuSystem.role == Client)
 				{
-
 					KeyState key_info;
 					keyinfo_store(&key_info);
 					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
@@ -349,7 +370,6 @@ static void internal_tick(void)
 				}
 				if (flag == 1)
 				{
-					printf("socket reset!\n");
 					close(socket_info->client_fd);
 					if (menuSystem.role == Server)
 						close(socket_info->server_fd);
@@ -358,32 +378,33 @@ static void internal_tick(void)
 			}
 			else // chasing
 			{
-				printf("chaser tick in main\n");
 				if (menuSystem.role == Server)
 				{
-
+					//printf("server\n");
 					KeyState key_info;
 					recv(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), MSG_WAITALL);
 					store_enemy_keysinfo(&key_info);
-
+					//printf("enemy key info\n");
 					game_tick2(&pacmanGame2);
+					//printf("game_tick2\n");
 
 					pacmanGame2.tick = ticks_game();
+					//printf("tick game2\n");
 					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
 					copy_pac_socket_info2();
-
+					//printf("copy pac socket \n");
 					send(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), 0);
 				}
 				else if (menuSystem.role == Client)
 				{
-
+					//printf("client\n");
 					KeyState key_info;
 					keyinfo_store(&key_info);
 					send(socket_info->client_fd, (char *)&key_info, sizeof(KeyState), 0);
-
+					//printf("send client info\n");
 					pac_socket2 = (PacmanGame_socket2 *)malloc(sizeof(PacmanGame_socket2));
 					recv(socket_info->client_fd, (char *)pac_socket2, sizeof(PacmanGame_socket2), MSG_WAITALL);
-
+					//printf("recieve server data\n");
 					copy_pacmanGame_info2();
 				}
 
@@ -397,7 +418,6 @@ static void internal_tick(void)
 				}
 				if (flag == 1)
 				{
-					printf("socket reset!\n");
 					close(socket_info->client_fd);
 					if (menuSystem.role == Server)
 						close(socket_info->server_fd);
@@ -492,7 +512,6 @@ static void internal_render(void)
 		}
 		else
 		{
-			printf("game 2 render in main\n");
 			if (menuSystem.role == Client)
 				game_render2(&pacmanGame2, pacmanGame2.tick);
 			else
@@ -530,6 +549,7 @@ static void game_init(void)
 	for (i = 0; i < STAGE_COUNT; i++)
 	{
 		load_board(&pacmanGame.board[i], &pacmanGame.pelletHolder[i], mapList[i]);
+		load_board(&pacmanGame2.board[i], &pacmanGame2.pelletHolder[i], mapList[i]);
 	}
 
 	//set to be in menu
@@ -549,7 +569,6 @@ static void startgame_init(void)
 {
 	if (menuSystem.gameMode == coorperate)
 	{
-		printf("into game 1\n");
 		if (menuSystem.role == Server)
 			pacmanGame.role = Server;
 		else if (menuSystem.role == Client)
@@ -558,7 +577,6 @@ static void startgame_init(void)
 	}
 	else
 	{
-		printf("into game 2\n");
 		if (menuSystem.role == Server)
 			pacmanGame2.role = Server;
 		else if (menuSystem.role == Client)
@@ -599,29 +617,73 @@ static void process_events(Player player)
 
 			break;
 		case SDL_KEYDOWN:
-			if (pacmanGame.role == Server)
-				handle_keydown(event.key.keysym.sym);
-			else if (pacmanGame.role == Client)
-				handle_keydown_player2(event.key.keysym.sym);
+			// if (pacmanGame.role == Server)
+			// 	handle_keydown(event.key.keysym.sym);
+			// else if (pacmanGame.role == Client)
+			// 	handle_keydown_player2(event.key.keysym.sym);
+			// else
+			// {
+			// 	handle_keydown(event.key.keysym.sym);
+			// 	if (player == Two)
+			// 		handle_keydown_player2(event.key.keysym.sym);
+			// }
+			// key_down_hacks(event.key.keysym.sym);
+			if (menuSystem.gameMode == coorperate)
+			{
+				if (pacmanGame.role == Server)
+					handle_keydown(event.key.keysym.sym);
+				else if (pacmanGame.role == Client)
+					handle_keydown_player2(event.key.keysym.sym);
+				else
+				{
+					handle_keydown(event.key.keysym.sym);
+					if (player == Two)
+						handle_keydown_player2(event.key.keysym.sym);
+				}
+				key_down_hacks(event.key.keysym.sym);
+			}
 			else
 			{
-				handle_keydown(event.key.keysym.sym);
-				if (player == Two)
+				if (pacmanGame2.role == Server)
+					handle_keydown(event.key.keysym.sym);
+				else if (pacmanGame2.role == Client)
 					handle_keydown_player2(event.key.keysym.sym);
+				else
+				{
+					handle_keydown(event.key.keysym.sym);
+					if (player == Two)
+						handle_keydown_player2(event.key.keysym.sym);
+				}
+				key_down_hacks(event.key.keysym.sym);
 			}
-			key_down_hacks(event.key.keysym.sym);
 
 			break;
 		case SDL_KEYUP:
-			if (pacmanGame.role == Server)
-				handle_keyup(event.key.keysym.sym);
-			else if (pacmanGame.role == Client)
-				handle_keyup_player2(event.key.keysym.sym);
+			if (menuSystem.gameMode == coorperate)
+			{
+				if (pacmanGame.role == Server)
+					handle_keyup(event.key.keysym.sym);
+				else if (pacmanGame.role == Client)
+					handle_keyup_player2(event.key.keysym.sym);
+				else
+				{
+					handle_keyup(event.key.keysym.sym);
+					if (player == Two)
+						handle_keyup_player2(event.key.keysym.sym);
+				}
+			}
 			else
 			{
-				handle_keyup(event.key.keysym.sym);
-				if (player == Two)
+				if (pacmanGame2.role == Server)
+					handle_keyup(event.key.keysym.sym);
+				else if (pacmanGame2.role == Client)
 					handle_keyup_player2(event.key.keysym.sym);
+				else
+				{
+					handle_keyup(event.key.keysym.sym);
+					if (player == Two)
+						handle_keyup_player2(event.key.keysym.sym);
+				}
 			}
 
 			break;
@@ -634,10 +696,15 @@ static void process_events(Player player)
 static void key_down_hacks(int keycode)
 {
 	if (keycode == SDLK_RETURN)
-		pacmanGame.currentLevel++;
+	{
+		if (menuSystem.gameMode == coorperate)
+			pacmanGame.currentLevel++;
+		else
+			pacmanGame2.currentLevel++;
+	}
+
 	if (keycode == SDLK_BACKSPACE)
 		menuSystem.ticksSinceModeChange = SDL_GetTicks();
-
 	static bool rateSwitch = false;
 
 	//TODO: remove this hack and try make it work with the physics body
@@ -695,7 +762,6 @@ static void key_down_hacks(int keycode)
 			menuSystem.action = Nothing;
 			menuSystem.action = Nothing;
 			state = Menu;
-			printf("explain page %d\n", menuSystem.explainPage);
 		}
 	}
 	else if (state == CheckQuit)
@@ -741,22 +807,19 @@ static void key_down_hacks(int keycode)
 			menuSystem.severIP[len] = keycode;
 	}
 	//if (keycode == SDLK_9 && state != Remote)
-	if (keycode == SDLK_9)
+	if (menuSystem.gameMode == coorperate)
 	{
-		printf("plus\n");
-		for (int i = 0; i < 4; i++)
-			pacmanGame.ghosts[i].body.velocity += 5;
-
-		printf("ghost speed: %d\n", pacmanGame.ghosts[0].body.velocity);
-	}
-	//else if (keycode == SDLK_0 && state != Remote)
-	else if (keycode == SDLK_0)
-	{
-		printf("minus\n");
-		for (int i = 0; i < 4; i++)
-			pacmanGame.ghosts[i].body.velocity -= 5;
-
-		printf("ghost speed: %d\n", pacmanGame.ghosts[0].body.velocity);
+		if (keycode == SDLK_9)
+		{
+			for (int i = 0; i < 4; i++)
+				pacmanGame.ghosts[i].body.velocity += 5;
+		}
+		//else if (keycode == SDLK_0 && state != Remote)
+		else if (keycode == SDLK_0)
+		{
+			for (int i = 0; i < 4; i++)
+				pacmanGame.ghosts[i].body.velocity -= 5;
+		}
 	}
 }
 

@@ -2,7 +2,7 @@
 
 void pacman_init(Pacman *pacman)
 {
-	pacman_location_init(pacman);
+	pacman_location_init(pacman, 1);
 	pacman->score = 0;
 	pacman->livesLeft = 3;
 	pacman->itemRemainTime = 0;
@@ -12,8 +12,9 @@ void pacman_init(Pacman *pacman)
 	printf("original\n");
 }
 
-void pacman_chaser_init(Pacman *pacman){
-		pacman_location_init(pacman);
+void pacman_chaser_init(Pacman *pacman)
+{
+	pacman_location_init(pacman, 2);
 	pacman->score = 0;
 	pacman->livesLeft = 3;
 	pacman->itemRemainTime = 0;
@@ -23,17 +24,33 @@ void pacman_chaser_init(Pacman *pacman){
 	printf("chaser\n");
 }
 
-void pacman_level_init(Pacman *pacman)
+void pacman_level_init(Pacman *pacman,int player)
 {
-	pacman_location_init(pacman);
+	if(player == 1){
+	pacman_location_init(pacman,1);
+
+	}else{
+	pacman_location_init(pacman,2);
+
+	}
 }
 
-void pacman_location_init(Pacman *pacman)
+void pacman_location_init(Pacman *pacman, int player)
 {
-	pacman->body = (PhysicsBody) {14, 23, -8, 0, Left, Left, 1, 0, 0};
-	pacman->body.velocity = 80;
-	pacman->movementType = Unstuck;
-	pacman->lastAttemptedMoveDirection = Left;
+	if (player == 1)
+	{
+		pacman->body = (PhysicsBody){14, 23, -8, 0, Left, Left, 1, 0, 0};
+		pacman->body.velocity = 80;
+		pacman->movementType = Unstuck;
+		pacman->lastAttemptedMoveDirection = Left;
+	}
+	else
+	{
+		pacman->body = (PhysicsBody){14, 11, -8, 0, Left, Left, 1, 0, 0};
+		pacman->body.velocity = 80;
+		pacman->movementType = Unstuck;
+		pacman->lastAttemptedMoveDirection = Left;
+	}
 }
 
 int pacman_speed_normal(int level)
@@ -43,8 +60,11 @@ int pacman_speed_normal(int level)
 
 int pacman_speed_fright(int level)
 {
-	if (level == 1)  return 90;
-	if (level <= 4)  return 95;
-	if (level <= 20) return 100;
+	if (level == 1)
+		return 90;
+	if (level <= 4)
+		return 95;
+	if (level <= 20)
+		return 100;
 	return 100;
 }

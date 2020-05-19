@@ -21,6 +21,7 @@ static void process_player2(Pacman *pacman, Board *board, Player2 Player2);
 static void process_pellets2(PacmanGame2 *game);
 static void process_missiles2(PacmanGame2 *game);
 static bool check_pacghost_collision2(PacmanGame2 *game);     //return true if pacman collided with any ghosts
+static bool check_pacchaser_collision2(PacmanGame2 *game);
 static bool check_ghomissile_collision2(PacmanGame2 *game);
 static void enter_state2(PacmanGame2 *game, GameState2 state); //transitions to/ from a state
 static bool resolve_telesquare2(PhysicsBody *body);          //wraps the body around if they've gone tele square
@@ -29,7 +30,6 @@ static Player2 death_player;
 
 void game_tick2(PacmanGame2 *game)
 {
-	printf("tick test\n");
 	Pacman *pac = &game->pacman;
 	Pacman *pac2 = &game->pacman_enemy;
 
@@ -101,8 +101,8 @@ void game_tick2(PacmanGame2 *game)
 	// State Transitions - refer to gameflow for descriptions
 	//
 
-	//bool allPelletsEaten = game->pelletHolder[game->stageLevel].numLeft == 0;
-	//bool collidedWithGhost = check_pacghost_collision2(game);
+	bool allPelletsEaten = game->pelletHolder[game->stageLevel].numLeft == 0;
+	bool collidedWithchaser = check_pacchaser_collision2(game);
 	bool collidedWithMissile = check_ghomissile_collision2(game);
 	
 	int lives = game->pacman.livesLeft;
@@ -127,8 +127,8 @@ void game_tick2(PacmanGame2 *game)
 
 			//TODO: remove this hacks
 			if (key_held(SDLK_k)) enter_state2(game, DeathState2);
-			//else if (allPelletsEaten) enter_state2(game, WinState2);
-			//else if (collidedWithGhost) enter_state2(game, DeathState2);
+			else if (allPelletsEaten) enter_state2(game, WinState2);
+			else if (collidedWithchaser) enter_state2(game, DeathState2);
 			break;
 		case WinState2:
 			//if (transitionLevel) //do transition here
@@ -186,11 +186,9 @@ void game_render2(PacmanGame2 *game, int tick)
 	//in gameover state big pellets don't render
 	//in gamebegin + levelbegin big pellets don't flash
 	//in all other states they flash at normal rate
-	printf("game Stage Level : %d\n",game->stageLevel);
 	switch (game->gameState2)
 	{
 		case GameBeginState2:
-			printf("GameBeginState2\n");
 			draw_game_playerone_start();
 			draw_game_ready();
 
@@ -198,7 +196,6 @@ void game_render2(PacmanGame2 *game, int tick)
 			draw_board(&game->board[game->stageLevel]);
 			break;
 		case LevelBeginState2:
-			printf("LevelBeginState2\n");
 			draw_game_ready();
 
 			//we also draw pacman and ghosts (they are idle currently though)
@@ -213,7 +210,6 @@ void game_render2(PacmanGame2 *game, int tick)
 			draw_board(&game->board[game->stageLevel]);
 			break;
 		case GamePlayState2:
-			printf("LevelBeginState2\n");
 			//stage 표시
 			draw_stage(game->currentLevel);
 			draw_large_pellets(&game->pelletHolder[game->stageLevel], true);
@@ -269,7 +265,6 @@ void game_render2(PacmanGame2 *game, int tick)
 			}
 			break;
 		case WinState2:
-			printf("WinState2\n");
 			
 			if(game->pacman.livesLeft != -1) draw_pacman_static(&game->pacman);
 			if(game->mode != SoloState && game->pacman_enemy.livesLeft != -1) draw_pacman2_static(&game->pacman_enemy);
@@ -294,7 +289,6 @@ void game_render2(PacmanGame2 *game, int tick)
 
 			break;
 		case DeathState2:
-			printf("DeathState2\n");
 			//draw everything the same for 1ish second
 			if (dt < 1000)
 			{
@@ -330,21 +324,18 @@ void game_render2(PacmanGame2 *game, int tick)
 			draw_large_pellets(&game->pelletHolder[game->stageLevel], true);
 			draw_board(&game->board[game->stageLevel]);
 			break;
-		case GameoverState2:
-			printf("GameoverState2\n");
+		case GameoverState2:;
 			draw_game_gameover();
 			draw_board(&game->board[game->stageLevel]);
 			draw_credits(num_credits());
 			break;
 		case ClearState2:
-			printf("ClearState2\n");
 			draw_game_clear();
 
 			draw_board(&game->board[game->stageLevel]);
 			draw_credits(num_credits());
 			break;
 	}
-	printf("render test\n");
 }
 
 static void enter_state2(PacmanGame2 *game, GameState2 state)
@@ -441,7 +432,6 @@ static void enter_state2(PacmanGame2 *game, GameState2 state)
 			break;
 		case GameoverState2:
 			play_sound(GameoverSound);
-			printf("GameoverState2\n");
 			game->currentLevel = 1;
 			game->stageLevel = 0;
 			//invalidate the state so it doesn't effect the enter_state function
@@ -466,7 +456,6 @@ static void enter_state2(PacmanGame2 *game, GameState2 state)
 
 	game->ticksSinceModeChange = ticks_game();
 	game->gameState2 = state;
-	printf("enter test\n");
 }
 
 //checks if it's valid that pacman could move in this direction at this point in time
@@ -592,7 +581,6 @@ static void process_player2(Pacman *pacman, Board *board, Player2 Player2)
 	}
 
 	resolve_telesquare2(&pacman->body);
-	printf("process_player2 test\n");
 }
 
 static void process_missiles2(PacmanGame2 *game)
@@ -716,8 +704,51 @@ static void process_pellets2(PacmanGame2 *game)
 	//maybe next time, poor pacman
 }
 //change must
-static bool check_pacghost_collision2(PacmanGame2 *game)
+static bool check_pacchaser_collision2(PacmanGame2 *game)
 {
+	if(collides(&game->pacman.body,&game->pacman_enemy.body)){
+		return true;
+	}
+		
+
+		
+	// 	if(pac->protect == 0 && pac->livesLeft != -1) {
+	// 		if (collides(&game->pacman.body, &g->body)) {
+	// 			if(game->pacman.godMode == false){
+	// 				death_player = One;
+	// 				game->death_player = One;
+	// 				return true;
+	// 			}
+	// 			else {
+	// 				if(g->isDead == 2) { death_player = One; return true;}
+	// 				play_sound(SirenSound);
+	// 				g->isDead = 1;
+	// 				death_send(g);
+	// 			}
+	// 		}
+
+	// 	}
+		
+
+	// 	pac = &game->pacman_enemy;
+	// 	if(pac->protect == 0 && pac->livesLeft != -1) {
+	// 		if(game->mode != SoloState){
+	// 			if (collides(&game->pacman_enemy.body, &g->body)) {
+	// 				if(game->pacman_enemy.godMode == false){
+	// 					death_player = Two;
+	// 					game->death_player = Two;
+	// 					return true;
+	// 				}
+	// 				else {
+	// 					if(g->isDead == 2) { death_player = Two; return true;}
+	// 				play_sound(SirenSound);
+	// 					g->isDead = 1;
+	// 					death_send(g);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return false;
 }
 
@@ -736,7 +767,6 @@ static bool check_ghomissile_collision2(PacmanGame2 *game)
 
 void gamestart_init2(PacmanGame2 *game, int mode)
 {
-	printf("gamestart_init : %d\n", mode);
 	// play mode 저장
 	if(mode == SoloState) game->mode = SoloState;
 	else if(mode == MultiState) game->mode = MultiState;
@@ -763,19 +793,18 @@ void gamestart_init2(PacmanGame2 *game, int mode)
 void level_init2(PacmanGame2 *game)
 {
 	//reset pacmans position
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,2);
 	
 	//reset pellets
-	printf("level_init2 : %d\n", game->stageLevel);
 	pellets_init(&game->pelletHolder[game->stageLevel]);
 	missiles_init(game->missiles);
 }
 
 void pacdeath_init2(PacmanGame2 *game)
 {
-	pacman_level_init(&game->pacman);
-	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy);
+	pacman_level_init(&game->pacman,1);
+	if(game->mode != SoloState) pacman_level_init(&game->pacman_enemy,2);
 	missiles_init(game->missiles);
 }
 
