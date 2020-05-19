@@ -8,4 +8,5 @@ Debug/game/src!main.c.o: src/main.c src/main.h SDL/SDL.h SDL/SDL_main.h \
  SDL/SDL_image.h SDL/SDL.h src/socket.h src/board.h src/boardloader.h \
  src/pellet.h src/fps.h src/game.h src/item.h src/ghost.h src/direction.h \
  src/pacman.h src/physics.h src/missile.h src/input.h src/intermission.h \
- src/imageloader.h src/menu.h src/sound.h src/text.h src/window.h
+ src/imageloader.h src/menu.h src/sound.h src/text.h src/window.h \
+ src/game2_chase.h

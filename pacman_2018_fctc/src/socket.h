@@ -18,9 +18,10 @@ typedef struct
 	struct sockaddr_in server_addr;
 	struct sockaddr_in client_addr;
 	socklen_t addr_len;
+	int gameMode; // 1 = normal / 2 = chase
 } Socket_value;
 
-void init_server(Socket_value *socket_info);
+void init_server(Socket_value *socket_info,int gamemode);
 
 int connect_server(Socket_value *socket_info);
 int connect_client(Socket_value *socket_info, char *severIP);
