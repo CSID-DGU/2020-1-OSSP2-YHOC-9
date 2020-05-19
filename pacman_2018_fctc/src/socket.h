@@ -10,6 +10,7 @@
 #include <netinet/ip.h>
 #include <fcntl.h>
 #include <SDL/SDL.h>
+#include <errno.h>
 
 typedef struct
 {

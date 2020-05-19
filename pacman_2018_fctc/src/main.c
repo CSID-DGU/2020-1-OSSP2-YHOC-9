@@ -74,8 +74,6 @@ static PacmanGame_socket *pac_socket2;
 static bool gameRunning = true;
 static int numCredits = 0;
 
-static bool waitFlag = false; //2020 ADD
-
 int main(void)
 {
 	resource_init();
@@ -434,14 +432,11 @@ static void internal_tick(void)
 		if (menuSystem.action == ServerWait)
 		{
 			// listen client
-			if (connect_server(socket_info) == -1)
-			{
-				//2020 ADD
-				if (!waitFlag)
-				{
-					printf("Wait...\n");
-					waitFlag = true;
-				}
+			//2020 ADD
+			int handler = connect_server(socket_info);
+			if(handler == -1) printf("Failed connection\n");
+			else if(handler == 1){ //pause by ESC
+
 			}
 			else
 				menuSystem.action = GoToGame;
@@ -464,7 +459,6 @@ static void internal_tick(void)
 		break;
 	case MakeGameRoom:
 		makegame_tick(&menuSystem, socket_info, &state);
-
 		break;
 
 	case CheckQuit:

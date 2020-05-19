@@ -41,6 +41,7 @@ void init_server(Socket_value *socket_info,int gameMode){
 	printf("Server : wating connection request.\n");
 }
 
+/*
 int connect_server(Socket_value *socket_info) {
 	//소켓을 수동 대기모드로 설정
 	if(listen(socket_info->server_fd, 5) < 0)
@@ -62,7 +63,58 @@ int connect_server(Socket_value *socket_info) {
 			return 0;
 		}		
 	}
-	return 0;
+	//return 0;
+}
+*/
+
+int connect_server(Socket_value *socket_info) {
+	//소켓을 수동 대기모드로 설정
+	if(listen(socket_info->server_fd, 5) < 0)
+	{
+		printf("Server : Can't listening connect.\n");
+		exit(0);
+	}
+	//2020 ADD : async socket
+	int server_msg[1];
+	int sFlag = fcntl(socket_info->server_fd, F_GETFL, 0);
+	fcntl(socket_info->server_fd, F_SETFL, sFlag | O_NONBLOCK);
+	
+	Uint8 *keystates = SDL_GetKeyState(NULL);
+	int writeFlag = 1;
+
+	while(1){
+		//accept
+		socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
+		if(socket_info->client_fd < 0){
+			//Not yet
+			if(errno == EAGAIN){
+				if(writeFlag == 1){
+					printf("Server : Not accep yet.\n");
+					writeFlag = 0;
+				}
+			}
+			//failed
+			else{
+				printf("Server : accept failed.\n");
+				return -1;
+			}
+		}		
+		//accept successly
+		else{
+			printf("Server : Connect successfuly\n");
+			recv(socket_info->client_fd,server_msg,sizeof(int),MSG_WAITALL);
+			printf("%d\n",server_msg[0]);
+			send(socket_info->client_fd,&socket_info->gameMode,sizeof(int),0);
+			return 0;
+		}
+		//Other processing
+		SDL_PumpEvents(); //update keystates
+		
+		if(keystates[SDLK_ESCAPE]){ //when escape key is downed.
+				printf("Pause the server's waiting\n");
+				return 1;
+		}
+	}
 }
 
 int connect_client(Socket_value *socket_info, char *severIP){
