@@ -7,7 +7,7 @@
 
 int port_num = 3088;
 
-void init_server(Socket_value *socket_info){
+void init_server(Socket_value *socket_info,int gameMode){
 	/* server socket 초기화 & 연결 client로부터 대기*/
 	
 	// 소켓 생성
@@ -26,7 +26,10 @@ void init_server(Socket_value *socket_info){
 	//socket_info->server_addr.sin_addr.s_addr = inet_addr(SERV_IP_ADDR);
 	socket_info->server_addr.sin_port = htons(port_num++);
 	socket_info->addr_len = 0;
-	
+
+	//2020 ADD test
+	socket_info->gameMode = gameMode;
+
 	if(bind(socket_info->server_fd, (struct sockaddr *)&socket_info->server_addr, sizeof(socket_info->server_addr)) <0)
     {
         printf("Server : Can't bind local address.\n");
@@ -38,6 +41,7 @@ void init_server(Socket_value *socket_info){
 	printf("Server : wating connection request.\n");
 }
 
+/*
 int connect_server(Socket_value *socket_info) {
 	//소켓을 수동 대기모드로 설정
 	if(listen(socket_info->server_fd, 5) < 0)
@@ -49,41 +53,68 @@ int connect_server(Socket_value *socket_info) {
 	//2020 ADD : async socket
 	int flag = fcntl(socket_info->server_fd, F_GETFL, 0);
 	fcntl(socket_info->server_fd, F_SETFL, flag | O_NONBLOCK);
-
+	int server_msg[1];
 	while(1){
 		socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
 		if(socket_info->client_fd > 0){
+			recv(socket_info->client_fd,server_msg,sizeof(int),MSG_WAITALL);
+			printf("%d\n",server_msg[0]);
+			send(socket_info->client_fd,&socket_info->gameMode,sizeof(int),0);
+			return 0;
+		}		
+	}
+	//return 0;
+}
+*/
+
+int connect_server(Socket_value *socket_info) {
+	//소켓을 수동 대기모드로 설정
+	if(listen(socket_info->server_fd, 5) < 0)
+	{
+		printf("Server : Can't listening connect.\n");
+		exit(0);
+	}
+	//2020 ADD : async socket
+	int server_msg[1];
+	int sFlag = fcntl(socket_info->server_fd, F_GETFL, 0);
+	fcntl(socket_info->server_fd, F_SETFL, sFlag | O_NONBLOCK);
+	
+	Uint8 *keystates = SDL_GetKeyState(NULL);
+	int writeFlag = 1;
+
+	while(1){
+		//accept
+		socket_info->client_fd = accept(socket_info->server_fd, (struct sockaddr *)&socket_info->client_addr, &socket_info->addr_len);
+		if(socket_info->client_fd < 0){
+			//Not yet
+			if(errno == EAGAIN){
+				if(writeFlag == 1){
+					printf("Server : Not accep yet.\n");
+					writeFlag = 0;
+				}
+			}
+			//failed
+			else{
+				printf("Server : accept failed.\n");
+				return -1;
+			}
+		}		
+		//accept successly
+		else{
+			printf("Server : Connect successfuly\n");
+			recv(socket_info->client_fd,server_msg,sizeof(int),MSG_WAITALL);
+			printf("%d\n",server_msg[0]);
+			send(socket_info->client_fd,&socket_info->gameMode,sizeof(int),0);
 			return 0;
 		}
-
-
-		//false
-		// if(socket_info->client_fd == -1){
-		// 	return -1;
-		// }
-
-		sleep(100);
+		//Other processing
+		SDL_PumpEvents(); //update keystates
 		
+		if(keystates[SDLK_ESCAPE]){ //when escape key is downed.
+				printf("Pause the server's waiting\n");
+				return 1;
+		}
 	}
-	return 0;
-}
-
-int send_server(Socket_value *socket_info) {
-	return 0;
-}
-
-int recv_server(Socket_value *socket_info) {
-	
-	return 0;
-}
-
-int send_client(Socket_value *socket_info) {
-	
-	return 0;
-}
-
-int recv_client(Socket_value *socket_info) {
-	return 0;
 }
 
 int connect_client(Socket_value *socket_info, char *severIP){
@@ -109,5 +140,10 @@ int connect_client(Socket_value *socket_info, char *severIP){
 	printf("Client : wating connection request.\n");
 	printf("Ip : %s\n", inet_ntoa(socket_info->server_addr.sin_addr));
 	printf("Port : %d\n",socket_info->server_addr.sin_port);
+	int client_msg[1] = {9};
+	send(socket_info->client_fd,client_msg,sizeof(int),0);
+	recv(socket_info->client_fd,client_msg,sizeof(int),MSG_WAITALL);
+	printf("%d\n",client_msg[0]);
+	socket_info->gameMode = client_msg[0];
 	return 1;
 }
