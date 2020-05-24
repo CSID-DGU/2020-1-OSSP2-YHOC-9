@@ -5,6 +5,4 @@ Debug/game/src!pellet.c.o: src/pellet.c src/pellet.h SDL/SDL.h \
  SDL/SDL_cdrom.h SDL/SDL_cpuinfo.h SDL/SDL_events.h SDL/SDL_active.h \
  SDL/SDL_keyboard.h SDL/SDL_keysym.h SDL/SDL_mouse.h SDL/SDL_video.h \
  SDL/SDL_joystick.h SDL/SDL_quit.h SDL/SDL_loadso.h SDL/SDL_timer.h \
- SDL/SDL_version.h src/game.h src/main.h src/board.h SDL/SDL_image.h \
- SDL/SDL.h src/item.h src/ghost.h src/direction.h src/pacman.h \
- src/physics.h src/missile.h
+ SDL/SDL_version.h

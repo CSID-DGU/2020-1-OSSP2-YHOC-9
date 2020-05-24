@@ -1,6 +1,6 @@
 #include "pellet.h"
-#include "game.h"
-
+// #include "game.h"
+// #include "game2_chase.h"
 void pellets_init(PelletHolder *pelletHolder)
 {
 	for (int i = 0; i < pelletHolder->pelletNumOfCurrentMap; i++)
