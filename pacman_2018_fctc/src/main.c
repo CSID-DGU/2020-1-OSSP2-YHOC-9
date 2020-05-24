@@ -16,6 +16,7 @@
 #include "sound.h"
 #include "text.h"
 #include "window.h"
+#include "window.c"
 #include "pellet.h"
 
 #include "game2_chase.h"
@@ -134,6 +135,15 @@ static void main_loop(void)
 				process_events(One);
 			}
 		}
+		SDL_Event event;
+		if(event.type == SDL_VIDEORESIZE)//리사이징 해주는 부분
+		{
+			dispose_window();
+			screen = SDL_SetVideoMode(event.risize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+			scr_tmep_rec.w = event.resize.w;
+			scr_tmep_rec.h = event.resize.h;
+		}
+			
 
 		internal_tick();
 		internal_render();

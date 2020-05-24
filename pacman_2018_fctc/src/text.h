@@ -5,6 +5,8 @@
 #include <SDL/SDL.h>
 
 #define NUM_FONTS 7
+#define SCREEN_wid 448
+#define SCREEN_hei 640
 
 //The different font-colors supported.
 typedef enum
@@ -33,8 +35,14 @@ void draw_text(SDL_Surface *surface, const char *text, int x, int y);
 //Draws the text at the given square on screen.
 void draw_text_coord(SDL_Surface *surface, const char *text, int x, int y);
 
+//Draws the text at the given square on resize screen.  
+void draw_text_coord_resize(SDL_Surface *surface, const char *text, int resize_w, int resize_h, int x, int y);
+
 //Draws text at the given square, but offset on y axis by 1 text pixel (used by numbers on main screens)
 void draw_numtext_coord(SDL_Surface *surface, const char *text, int x, int y);
+
+//Draws text at the given square, but offset on y axis by 1 text pixel (used by numbers on main screens)
+void draw_numtext_coord_resize(SDL_Surface *surface, const char *text, int resize_w, int resize_h, int x, int y);
 
 //Returns true if the font supports the given character.
 bool is_valid(char c);
