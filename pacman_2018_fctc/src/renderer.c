@@ -11,35 +11,22 @@
 
 //draws an image at a board coordinate
 void draw_image_coord(SDL_Surface *surface, int x, int y);
-void draw_image_coord_resize(SDL_Surface *surface, int resize_x, int resize_y, int x, int y);
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset);
-void draw_image_coord_offset_resize(SDL_Surface *surface, int resize_w, int resize_h, int x, int y, int xOffset, int yOffset);
 
-//Offset the board is off from the top of the screenint resize_w, int resize_h,
+//Offset the board is off from the top of the screen
 //Needed because some items are stored in board (x,y) coords and need to be rendered at an offset
 #define Y_OFFSET 4
 static int offset = 4 * 16;
 
-void draw_image_coord(SDL_Surface *surface, int resize_x, int resize_y, int x, int y)
+void draw_image_coord(SDL_Surface *surface, int x, int y)
 {
-	draw_image_coord_offset(surface, x, y, 0, 0);	
-}
-
-void draw_image_coord_resize(SDL_Surface *surface, int resize_w, int resize_h, int x, int y)
-{
-	draw_image_coord_offset_resize(surface, resize_w, resize_h, x, y, 0, 0);
+	draw_image_coord_offset(surface, x, y, 0, 0);
 }
 
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset)
 {
 	int pixPerTile = 16;
 	apply_surface(pixPerTile * x + xOffset, pixPerTile * y + yOffset, surface);
-}
-
-void draw_image_coord_offset_resize(SDL_Surface *surface, int resize_w, int resize_h, int x, int y, int xOffset, int yOffset)
-{
-	int pixPerTile = 16;
-	apply_surface((int)((resize_w / SCREEN_W)(pixPerTile * x + xOffset)), (int)((resize_h / SCREEN_H)(pixPerTile * y + yOffset)), surface);
 }
 
 //
@@ -60,36 +47,14 @@ void draw_vanity_ghostline(GhostDisplayRow *row, int y, bool drawDescription, bo
 
 	if (drawName)
 	{
-		draw_text_coord(get_screen(), row->name, 16,y);
-	}
-}
-
-void draw_vanity_ghostline_resize(GhostDisplayRow *row, int resize_w, int resize_h, int y, bool drawDescription, bool drawName)
-{
-	draw_image_coord(ghost_image(row->type, Right, 0), (int)(2*(resize_w/SCREEN_W)), (int)(y*(resize_h/SCREEN_H)));
-
-	if (drawDescription)
-	{
-		set_text_color(row->color);
-		draw_text_coord_resize(get_screen(),  row->description, resize_w, resize_h, x, y);
-	}
-
-	if (drawName)
-	{
-		draw_text_coord_resize(get_screen(),  row->name, resize_w, resize_h, x, y);
+		draw_text_coord(get_screen(), row->name, 16, y);
 	}
 }
 
 void draw_vanity_charnickname(void)
 {
 	set_text_color(WhiteText);
-	draw_text_coord(get_screen(), "CHARACTER / NICKNAME", 5, 12);
-}
-
-void draw_vanity_charnickname_resize(int resize_w, int resize_h)
-{
-	set_text_color(WhiteText);
-	draw_text_coord_resize(get_screen(), "CHARACTER / NICKNAME", resize_w, resize_h, 5, 12);
+	draw_text_coord(get_screen(), "CHARACTER / NICKNAME", 5, 11);
 }
 
 void draw_vanity_text(const char *text, int x, int y)
@@ -98,24 +63,11 @@ void draw_vanity_text(const char *text, int x, int y)
 	draw_text_coord(get_screen(), text, x, y);
 }
 
-void draw_vanity_text_resize(const char *text, int resize_w, int resize_h, int x, int y)
-{
-	set_text_color(WhiteText);
-	draw_text_coord_resize(get_screen(), text, resize_w, resize_h, x y);
-}
-
 void draw_vanity_corporate_info(void)
 {
 	set_text_color(PinkText);
 	draw_text_coord(get_screen(), "@      MIDWAY MFG.CO.", 4, 32);
 	draw_numtext_coord(get_screen(), "  1980", 4, 32);
-}
-
-void draw_vanity_corporate_info_resize(int resize_w, int resize_h)
-{
-	set_text_color(PinkText);
-	draw_text_coord_resize(get_screen(), "@      MIDWAY MFG.CO.", resize_w, resize_h, 4, 32);
-	draw_numtext_coord_resize(get_screen(), "  1980", resize_w, resize_h, 4, 32);
 }
 
 void draw_vanity_pellet_info(bool flashing)
@@ -131,22 +83,6 @@ void draw_vanity_pellet_info(bool flashing)
 
 	draw_image_coord(large_pellet_image(), 10, 28);
 	draw_numtext_coord(get_screen(), "50", 12, 28);
-	draw_image_coord(pts_white_image(), 15, 28);
-}
-
-void draw_vanity_pellet_info_resize(bool flashing, int resize_w, int resize_h)
-{
-	//TODO: use this properly
-	if (flashing) return;
-
-	set_text_color(WhiteText);
-
-	draw_image_coord(small_pellet_image(), 10, 26);
-	draw_numtext_coord_resize(get_screen(), "10", resize_w, resize_h, 12, 26);
-	draw_image_coord(pts_white_image(), 15, 26);
-
-	draw_image_coord(large_pellet_image(), 10, 28);
-	draw_numtext_coord_resize(get_screen(), "50", resize_w, resize_h, 12, 28);
 	draw_image_coord(pts_white_image(), 15, 28);
 }
 
@@ -180,33 +116,11 @@ void draw_instrc_info(void)
 	draw_image_coord(pts_peach_image(), 25, 24);
 }
 
-void draw_instrc_info_resize(int resize_w, int resize_h)
-{
-	set_text_color(OrangeText);
-	draw_text_coord_resize(get_screen(), "PUSH START BUTTON", resize_w, resize_h, 6, 16);
-
-	set_text_color(CyanText);
-	draw_text_coord_resize(get_screen(), "  PLAYER ONLY", resize_w, resize_h, 8, 20);
-	draw_numtext_coord(get_screen(), "1", 8, 20);
-
-	set_text_color(PeachText);
-	draw_text_coord_resize(get_screen(), "BONUS PAC-MAN FOR", resize_w, resize_h, 1, 24);
-	draw_numtext_coord_resize(get_screen(), "                  10000", resize_w, resize_h, 1, 24);
-	draw_image_coord(pts_peach_image(), 25, 24);
-}
-
 void draw_instrc_corporate_info(void)
 {
 	set_text_color(PinkText);
 	draw_text_coord(get_screen(), "@      MIDWAY MFG.CO.", 4, 28);
 	draw_numtext_coord(get_screen(), "  1980", 4, 28);
-}
-
-void draw_instrc_corporate_info_resize(int resize_w, int resize_h)
-{
-	set_text_color(PinkText);
-	draw_text_coord_resize(get_screen(), "@      MIDWAY MFG.CO.", resize_w, resize_h, 4, 28);
-	draw_numtext_coord_resize(get_screen(), "  1980", resize_w, resize_h, 4, 28);
 }
 
 //
@@ -228,19 +142,6 @@ void draw_common_oneup(bool flashing, int score)
 	draw_text_coord(get_screen(), scoreStr, 6 - int_length(score), 2);
 }
 
-void draw_common_oneup_resize(bool flashing, int score, int resize_w, int resize_h)
-{
-	set_text_color(WhiteText);
-	draw_numtext_coord_resize(get_screen(), "1", resize_w, resize_h, 3, 1);
-	draw_text_coord_resize(get_screen(), "UP", resize_w, resize_h, 4, 1);
-
-	if (flashing && animation_get_frame(265, 2)) return;
-
-	char scoreStr[256];
-	sprintf(scoreStr, "%01i", score);
-	draw_text_coord_resize(get_screen(), scoreStr, resize_w, resize_h, 6 - int_length(score), 2);
-}
-
 void draw_common_twoup(bool flashing, int score)
 {
 	set_text_color(WhiteText);
@@ -252,19 +153,6 @@ void draw_common_twoup(bool flashing, int score)
 	char scoreStr[256];
 	sprintf(scoreStr, "%01i", score);
 	draw_text_coord(get_screen(), scoreStr, 25 - int_length(score), 2);
-}
-
-void draw_common_twoup_resize(bool flashing, int score, int resize_w, int resize_h)
-{
-	set_text_color(WhiteText);
-	draw_numtext_coord_resize(get_screen(), "2", resize_w, resize_h, 22, 1);
-	draw_text_coord_resize(get_screen(), "UP", resize_w, resize_h, 23, 1);
-
-	if (flashing && animation_get_frame(265, 2)) return;
-
-	char scoreStr[256];
-	sprintf(scoreStr, "%01i", score);
-	draw_text_coord_resize(get_screen(), scoreStr, resize_w, resize_h, 25 - int_length(score), 2);
 }
 
 void draw_common_highscore(int highscore)
@@ -280,22 +168,8 @@ void draw_common_highscore(int highscore)
 	draw_text_coord(get_screen(), scoreStr, 16 - int_length(highscore), 2);
 }
 
-void draw_common_highscore_resize(int highscore, int resize_w, int resize_h)
-{
-	set_text_color(WhiteText);
-	draw_text_coord_resize(get_screen(), "HIGH SCORE", resize_w, resize_h, 9, 1);
 
-	//game doesn't render highscore if it is 0 for some reason. Emulate this behaviour
-	if (highscore == 0) return;
-
-	char scoreStr[256];
-	sprintf(scoreStr, "%01i", highscore);
-	draw_text_coord_resize(get_screen(), scoreStr, resize_w, resize_h, 16 - int_length(highscore), 2);
-}
-
-
-void draw_stage(int curLvl)
-{
+void draw_stage(int curLvl){
 	set_text_color(WhiteText);
 	draw_text_coord(get_screen(), "STAGE", 11, 0);
 
@@ -304,32 +178,12 @@ void draw_stage(int curLvl)
 	draw_text_coord(get_screen(), levelStr, 16, 0);
 }
 
-void draw_stage_resize(int curLvl, int resize_w, int resize_h)
-{
-	set_text_color(WhiteText);
-	draw_text_coord_resize(get_screen(), "STAGE", resize_w, resize_h, 11, 0);
-
-	char levelStr[10];
-	sprintf(levelStr, "%01i", curLvl);
-	draw_text_coord_resize(get_screen(), levelStr, resize_w, resize_h, 16, 0);
-}
-
 void draw_common_indicator(int mode, int x, int y)
 {
 	set_text_color(WhiteText);
 	if(mode == 0) draw_text_coord(get_screen(), "@", x, y+3);
 	else if(mode == 1) draw_text_coord(get_screen(), "@", x, y+5);
-	else if(mode == 2) draw_text_coord(get_screen(), "@", x, y+7);
-	else draw_text_coord(get_screen(), "@", x, y+9);
-}
-
-void draw_common_indicator(int mode, int resize_w, int resize_h, int x, int y)
-{
-	set_text_color(WhiteText);
-	if(mode == 0) draw_text_coord_resize(get_screen(), "@", resize_w, resize_h, x, y+3);
-	else if(mode == 1) draw_text_coord_resize(get_screen(), "@", resize_w, resize_h, x, y+5);
-	else if(mode == 2) draw_text_coord_resize(get_screen(), "@", resize_w, resize_h, x, y+7);
-	else draw_text_coord_resize(get_screen(), "@", resize_w, resize_h, x, y+9);
+	else draw_text_coord(get_screen(), "@", x, y+7);
 }
 
 void draw_credits(int numCredits)
@@ -350,24 +204,6 @@ void draw_credits(int numCredits)
 	draw_numtext_coord(get_screen(), scoreStr, 8 - int_length(numCredits), 37);
 }
 
-void draw_credits_resize(int numCredits, int resize_w, int resize_h)
-{
-	if (numCredits < 0)
-	{
-		printf("negative number credits: %d\naborting\b", numCredits);
-		exit(1);
-	}
-
-	char scoreStr[256];
-	sprintf(scoreStr, "   %i", numCredits);
-
-	//draw credit + number of credits at the appropriate place
-	set_text_color(WhiteText);
-	draw_text_coord_resize(get_screen(), "CREDIT", resize_w, resize_h, 2, 37);
-
-	draw_numtext_coord_resize(get_screen(), scoreStr, resize_w, resize_h, 8 - int_length(numCredits), 37);
-}
-
 //
 // Game-only word rendering
 //
@@ -378,22 +214,10 @@ void draw_game_playerone_start(void)
 	draw_text_coord(get_screen(), "PLAYER ONE", 9, 15);
 }
 
-void draw_game_playerone_start_resize(int resize_w, int resize_h)
-{
-	set_text_color(CyanText);
-	draw_text_coord_resize(get_screen(), "PLAYER ONE", resize_w, resize_h, 9, 15);
-}
-
 void draw_game_playertwo_start(void)
 {
 	set_text_color(OrangeText);
 	draw_text_coord(get_screen(), "PLAYER TWO", 9, 17);
-}
-
-void draw_game_playertwo_start_resize(int resize_w, int resize_h)
-{
-	set_text_color(OrangeText);
-	draw_text_coord_resize(get_screen(), "PLAYER TWO", resize_w, resize_h, 9, 17);
 }
 
 void draw_game_ready(void)
@@ -402,22 +226,10 @@ void draw_game_ready(void)
 	draw_text_coord(get_screen(), "READY!", 11, 21);
 }
 
-void draw_game_ready_resize(int resize_w, int resize_h)
-{
-	set_text_color(YellowText);
-	draw_text_coord_resize(get_screen(), "READY!", resize_w, resize_h, 11, 21);
-}
-
 void draw_game_gameover(void)
 {
 	set_text_color(RedText);
 	draw_text_coord(get_screen(), "GAME  OVER", 9, 21);
-}
-
-void draw_game_gameover_resize(int resize_w, int resize_h)
-{
-	set_text_color(RedText);
-	draw_text_coord_resize(get_screen(), "GAME  OVER", resize_w, resize_h, 9, 21);
 }
 
 void draw_game_clear(void)
@@ -425,15 +237,9 @@ void draw_game_clear(void)
 	set_text_color(RedText);
 	draw_text_coord(get_screen(), "GAME CLEAR ! ! !",7,21);
 	set_text_color(YellowText);
-	draw_text_coord(get_screen(), "CREATED BY YHOC",7,23);	
-}
-
-void draw_game_clear_resize(int resize_w, int resize_h)
-{
-	set_text_color(RedText);
-	draw_text_coord_resize(get_screen(), "GAME CLEAR ! ! !", resize_w, resize_h, 7,21);
-	set_text_color(YellowText);
-	draw_text_coord_resize(get_screen(), "CREATED BY YHOC", resize_w, resize_h, 7,23);	
+	draw_text_coord(get_screen(), "CREATED BY FCTC",7,23);	
+	draw_text_coord(get_screen(), "INO  JI SU",9,27);
+	draw_text_coord(get_screen(), "JOON SEO  HYEON JONG",4,25);
 }
 
 

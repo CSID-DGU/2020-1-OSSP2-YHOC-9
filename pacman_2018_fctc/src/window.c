@@ -5,7 +5,7 @@
 #define SCREEN_HEI 640
 
 SDL_Surface *screen;
-SDL_Surface *scr_temp;//화면에 출력을 하기 전에 저장을 위한 s
+SDL_Surface *scr_temp;//화면에 출력을 하기 전에 저장을 위한 surface
 SDL_Rect scr_rec;
 SDL_Rect scr_temp_rec;
 

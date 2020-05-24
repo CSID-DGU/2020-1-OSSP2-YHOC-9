@@ -136,7 +136,7 @@ static void main_loop(void)
 			}
 		}
 		SDL_Event event;
-		if(event.type == SDL_VIDEORESIZE)
+		if(event.type == SDL_VIDEORESIZE)//리사이징 해주는 부분
 		{
 			dispose_window();
 			screen = SDL_SetVideoMode(event.risize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
