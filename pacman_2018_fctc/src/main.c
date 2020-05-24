@@ -71,7 +71,7 @@ static Socket_value *socket_info;
 //game mode 1
 static PacmanGame_socket *pac_socket;
 //game mode 2
-static PacmanGame_socket *pac_socket2;
+static PacmanGame_socket2 *pac_socket2;
 
 static bool gameRunning = true;
 static int numCredits = 0;
@@ -209,17 +209,17 @@ static void copy_pac_socket_info2()
 	//puts("3");
 	int pellet_num = pac_socket2->pelletHolder.pelletNumOfCurrentMap;
 	//puts("4");
-	// for (int i = 0; i < NUM_PELLETS; i++)
-	// {
-	// 	pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
-	// 	pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
-	// 	pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
-	// 	pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
-	// 	if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
-	// 		pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
-	// 	else
-	// 		pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
-	// }
+	for (int i = 0; i < NUM_PELLETS; i++)
+	{
+		pac_socket2->pelletHolder.pellets[i].x = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x;
+		pac_socket2->pelletHolder.pellets[i].y = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y;
+		pac_socket2->pelletHolder.pellets[i].eaten = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten;
+		pac_socket2->pelletHolder.pellets[i].type = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type;
+		if (pac_socket2->pelletHolder.pellets[i].type == LargePellet)
+			pac_socket2->pelletHolder.pellets[i].image = large_pellet_image();
+		else
+			pac_socket2->pelletHolder.pellets[i].image = small_pellet_image();
+	}
 	//printf("copy_pac_socket2 end\n");
 }
 
@@ -292,18 +292,20 @@ static void copy_pacmanGame_info2(void)
 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].totalNum = pac_socket2->pelletHolder.totalNum;
 
 	int pellet_num = pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pelletNumOfCurrentMap;
-	// for (int i = 0; i < NUM_PELLETS; i++)
-	// {
-	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
-	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
-	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
-	// 	pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
+	//printf("%d\n",pellet_num);
+	for (int i = 0; i < NUM_PELLETS; i++)
+	{
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].x = pac_socket2->pelletHolder.pellets[i].x;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].y = pac_socket2->pelletHolder.pellets[i].y;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].eaten = pac_socket2->pelletHolder.pellets[i].eaten;
+		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type = pac_socket2->pelletHolder.pellets[i].type;
 
-	// 	if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
-	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
-	// 	else
-	// 		pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
-	// }
+		if (pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].type == LargePellet)
+			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = large_pellet_image();
+		else
+			pacmanGame2.pelletHolder[pacmanGame2.stageLevel].pellets[i].image = small_pellet_image();
+
+	}
 }
 
 static void internal_tick(void)
