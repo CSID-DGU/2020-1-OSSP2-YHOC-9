@@ -6,7 +6,6 @@
 
 SDL_Surface *screen;
 SDL_Surface *scr_temp;//화면에 출력을 하기 전에 저장을 위한 surface
-SDL_Rect scr_rec;
 SDL_Rect scr_temp_rec;
 
 //Initializes the window to the given length, width and title.
