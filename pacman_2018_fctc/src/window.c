@@ -4,11 +4,6 @@
 #define SCREEN_WID 448
 #define SCREEN_HEI 640
 
-SDL_Surface *screen;
-SDL_Surface *scr_temp;//화면에 출력을 하기 전에 저장을 위한 surface
-SDL_Rect scr_rec;
-SDL_Rect scr_temp_rec;
-
 bool init_window(const char* title, int width, int height)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
@@ -16,11 +11,13 @@ bool init_window(const char* title, int width, int height)
 		return false;
 	}
 
-	screen = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-	scr_temp = SDL_CreateRGVSurface(SDL_SWSURFACE, width, height, screen->format->BitsPerPixel,
-								screen->format->Rmask, screen->format->Gmask,
-								screen->format->Bmask, screen->format->Amask);
+	screen = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
 
+	scr_temp = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+	/*(SDL_SWSURFACE, SCREEN_WID, SCREEN_HEI, screen->format->BitsPerPixel
+								screen->format->Rmask, screen->format->Gmask,
+								screen->format->Bmask, screewidthn->format->Amask);
+*/
 	scr_rec.x = 0;
 	scr_rec.y = 0;
 	scr_rec.w = width;
@@ -30,6 +27,7 @@ bool init_window(const char* title, int width, int height)
 	scr_temp_rec.y = 0;
 	scr_temp_rec.w = width;
 	scr_temp_rec.h = height;
+	
 	if (screen == NULL)
 	{
 		return false;
@@ -69,10 +67,12 @@ void apply_surface(int x, int y, SDL_Surface* source)
 void flip_screen(void)
 {
 	SDL_Surface * temp;
-	double zoom_w = (double) scr_temp_rec.w/SCREEN_WID;
-	double zoom_h = (double) scr_temp_rec.w/SCREEN_WID;
+	double zoom_w = (double) scr_temp_rec.w /SCREEN_WID;
+	double zoom_h = (double) scr_temp_rec.h /SCREEN_WID;
+	
+	temp = zoomSurface(scr_temp, zoom_w, zoom_h, 0);
 
-	SDL_BlitSurface(temp, &scr_temp_rec, scr_temp, &scr_temp_rec);
+	SDL_BlitSurface(temp, &scr_temp_rec, screen, &scr_temp_rec);
 
 	SDL_Flip(screen);
 	SDL_FreeSurface(temp);
