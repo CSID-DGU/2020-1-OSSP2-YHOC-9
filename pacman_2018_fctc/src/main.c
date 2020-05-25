@@ -139,9 +139,9 @@ static void main_loop(void)
 		if(event.type == SDL_VIDEORESIZE)//리사이징 해주는 부분
 		{
 			dispose_window();
-			screen = SDL_SetVideoMode(event.risize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-			scr_tmep_rec.w = event.resize.w;
-			scr_tmep_rec.h = event.resize.h;
+			screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+			scr_temp_rec.w = event.resize.w;
+			scr_temp_rec.h = event.resize.h;
 		}
 			
 
