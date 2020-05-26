@@ -11,9 +11,7 @@ bool init_window(const char* title, int width, int height)
 		return false;
 	}
 
-	screen = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-
-	scr_temp = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+	screen = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_RESIZABLE);
 
 	if (screen == NULL)
 	{
@@ -32,7 +30,7 @@ void dispose_window(void)
 
 SDL_Surface *get_screen(void)
 {
-	return scr_temp;
+	return screen;
 }
 
 void clear_screen(int r, int g, int b, int a)
@@ -48,7 +46,7 @@ void apply_surface(int x, int y, SDL_Surface* source)
 	offset.x = x;
 	offset.y = y;
 	
-	SDL_BlitSurface(source, NULL, scr_temp, &offset);
+	SDL_BlitSurface(source, NULL, screen, &offset);
 }
 
 void flip_screen(void)
@@ -58,7 +56,7 @@ void flip_screen(void)
 	double zoom_w = (double) scr_temp_rec.w /SCREEN_WID;
 	double zoom_h = (double) scr_temp_rec.h /SCREEN_HEI;
 	
-	temp = zoomSurface(scr_temp, zoom_w, zoom_h, 0);
+	temp = zoomSurface(screen, zoom_w, zoom_h, 0);
 
 	SDL_BlitSurface(temp, NULL, screen, &scr_temp_rec);
 
