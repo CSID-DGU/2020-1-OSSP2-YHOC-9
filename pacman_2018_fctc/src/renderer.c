@@ -54,7 +54,7 @@ void draw_vanity_ghostline(GhostDisplayRow *row, int y, bool drawDescription, bo
 void draw_vanity_charnickname(void)
 {
 	set_text_color(WhiteText);
-	draw_text_coord(get_screen(), "CHARACTER / NICKNAME", 5, 11);
+	draw_text_coord(get_screen(), "CHARACTER / NICKNAME", 5, 12);
 }
 
 void draw_vanity_text(const char *text, int x, int y)
@@ -183,7 +183,8 @@ void draw_common_indicator(int mode, int x, int y)
 	set_text_color(WhiteText);
 	if(mode == 0) draw_text_coord(get_screen(), "@", x, y+3);
 	else if(mode == 1) draw_text_coord(get_screen(), "@", x, y+5);
-	else draw_text_coord(get_screen(), "@", x, y+7);
+	else if(mode == 2) draw_text_coord(get_screen(), "@", x, y+7);
+	else draw_text_coord(get_screen(), "@", x, y+9);
 }
 
 void draw_credits(int numCredits)
@@ -237,9 +238,7 @@ void draw_game_clear(void)
 	set_text_color(RedText);
 	draw_text_coord(get_screen(), "GAME CLEAR ! ! !",7,21);
 	set_text_color(YellowText);
-	draw_text_coord(get_screen(), "CREATED BY FCTC",7,23);	
-	draw_text_coord(get_screen(), "INO  JI SU",9,27);
-	draw_text_coord(get_screen(), "JOON SEO  HYEON JONG",4,25);
+	draw_text_coord(get_screen(), "CREATED BY YHOC",7,23);	
 }
 
 
