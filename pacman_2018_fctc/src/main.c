@@ -685,7 +685,7 @@ static void process_events(Player player)
 			case SDL_VIDEORESIZE:
 				{
 					dispose_window();
-					screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+					screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_RESIZABLE);
 					scr_temp_rec.w = event.resize.w;
 					scr_temp_rec.h = event.resize.h;
 				}
