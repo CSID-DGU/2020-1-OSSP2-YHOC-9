@@ -688,7 +688,7 @@ static void process_events(Player player)
 					screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_RESIZABLE);
 					scr_temp_rec.w = event.resize.w;
 					scr_temp_rec.h = event.resize.h;
-				}
+				}//리사이즈에 따라서 크기를 조정해서 새로 window를 새로 만들었습니다.
 		}
 
 	}
