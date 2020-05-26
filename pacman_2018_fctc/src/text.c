@@ -2,7 +2,6 @@
 
 #include "imageloader.h"
 #include "imageutil.h"
-#include "window.c"
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
