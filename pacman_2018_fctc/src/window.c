@@ -11,23 +11,9 @@ bool init_window(const char* title, int width, int height)
 		return false;
 	}
 
-	screen = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+	screen = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_RESIZABLE);
+	//resizable 플래그를 추가를 해서 resize가 가능하게 만들었습니다. 
 
-	scr_temp = SDL_SetVideoMode(SCREEN_WID, SCREEN_HEI, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-	/*(SDL_SWSURFACE, SCREEN_WID, SCREEN_HEI, screen->format->BitsPerPixel
-								screen->format->Rmask, screen->format->Gmask,
-								screen->format->Bmask, screewidthn->format->Amask);
-*/
-	scr_rec.x = 0;
-	scr_rec.y = 0;
-	scr_rec.w = width;
-	scr_rec.h = height;
-
-	scr_temp_rec.x = 0;
-	scr_temp_rec.y = 0;
-	scr_temp_rec.w = width;
-	scr_temp_rec.h = height;
-	
 	if (screen == NULL)
 	{
 		return false;
@@ -45,7 +31,7 @@ void dispose_window(void)
 
 SDL_Surface *get_screen(void)
 {
-	return scr_temp;
+	return screen;
 }
 
 void clear_screen(int r, int g, int b, int a)
@@ -61,19 +47,22 @@ void apply_surface(int x, int y, SDL_Surface* source)
 	offset.x = x;
 	offset.y = y;
 	
-	SDL_BlitSurface(source, NULL, scr_temp, &offset);
+	SDL_BlitSurface(source, NULL, screen, &offset);
 }
 
 void flip_screen(void)
 {
 	SDL_Surface * temp;
+
 	double zoom_w = (double) scr_temp_rec.w /SCREEN_WID;
-	double zoom_h = (double) scr_temp_rec.h /SCREEN_WID;
+	double zoom_h = (double) scr_temp_rec.h /SCREEN_HEI;
+	//크기 비율이 얼만큼 변했는지를 알기 위한 계산
 	
-	temp = zoomSurface(scr_temp, zoom_w, zoom_h, 0);
-
-	SDL_BlitSurface(temp, &scr_temp_rec, screen, &scr_temp_rec);
-
-	SDL_Flip(screen);
+	temp = zoomSurface(screen, zoom_w, zoom_h, 0);
+	//rotozoom을 사용을 해서 비율을 조절한 것을 temp에 저장
+	SDL_BlitSurface(temp, NULL, screen, &scr_temp_rec);
+	//temp를 screen에 적용
 	SDL_FreeSurface(temp);
+	
+	SDL_Flip(screen);
 }
