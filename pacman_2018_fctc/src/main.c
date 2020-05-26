@@ -133,7 +133,7 @@ static void main_loop(void)
 			{
 				process_events(One);
 			}
-		}
+		}	
 
 		internal_tick();
 		internal_render();
@@ -532,7 +532,6 @@ static void internal_render(void)
 		draw_makegame_screen(&menuSystem);
 		break;
 	}
-
 	flip_screen();
 }
 
@@ -683,7 +682,15 @@ static void process_events(Player player)
 			}
 
 			break;
+			case SDL_VIDEORESIZE:
+				{
+					dispose_window();
+					screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_RESIZABLE);
+					scr_temp_rec.w = event.resize.w;
+					scr_temp_rec.h = event.resize.h;
+				}//리사이즈에 따라서 크기를 조정해서 새로 window를 새로 만들었습니다.
 		}
+
 	}
 
 	keyevents_finished();

@@ -2,6 +2,13 @@
 
 #include "imageloader.h"
 #include "imageutil.h"
+#include "window.c"
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
+
+#define SCREEN_wid 448
+#define SCREEN_hei 640
 
 //Gets the image for the specified character.
 static SDL_Surface *get_surface(char c);
@@ -143,9 +150,21 @@ void draw_numtext_coord(SDL_Surface *surface, const char *text, int x, int y)
 	draw_text(surface, text, x * 16, y * 16 - 2);
 }
 
+void draw_numtext_coord_resize(SDL_Surface *surface, const char *text, int resize_w, int resize_h, int x, int y)
+{
+	//a text square is 2 actual pixels out of alignment with number squares
+	//do an offset when drawing
+	draw_text(surface, text, (resize_w/SCREEN_wid)*x * 16, (int)((y * 16 - 2)*(resize_h/SCREEN_hei)));
+}
+
 void draw_text_coord(SDL_Surface *surface, const char *text, int x, int y)
 {
 	draw_text(surface, text, x * 16, y * 16);
+}
+
+void draw_text_coord_resize(SDL_Surface *surface, const char *text, int resize_w, int resize_h,int x, int y)
+{
+	draw_text(surface, text, (int)((resize_w/SCREEN_wid)*x * 16), (int)((y * 16)*(resize_h/SCREEN_hei)));
 }
 
 static void set_fontimage_color(SDL_Surface *image, TextColor color)

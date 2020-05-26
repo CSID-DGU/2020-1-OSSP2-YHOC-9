@@ -4,6 +4,10 @@
 
 #include <SDL/SDL.h>
 
+SDL_Surface *screen;
+SDL_Rect scr_temp_rec;
+//화면 구성 요소
+
 //Initializes the window to the given length, width and title.
 bool init_window(const char* title, int width, int height);
 
