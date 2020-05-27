@@ -242,8 +242,8 @@ void game_render2(PacmanGame2 *game, int tick)
 			
 			if(game->mode != SoloState) {
 					pac = &game->pacman_enemy;
-					
-					if(game->mode != SoloState && game->pacman_enemy.livesLeft != -1) draw_pacman2(&game->pacman_enemy);
+					if( game->pacman.godMode) draw_scared_chaser(&game,godDt);
+					else if(game->mode != SoloState && game->pacman_enemy.livesLeft != -1) draw_pacman2(&game->pacman_enemy);
 					//draw_pacman2(&game->pacman_enemy);
 			
 					if(game->pacman_enemy.godMode == false) {
@@ -661,7 +661,7 @@ static void process_pellets2(PacmanGame2 *game)
 			if(pellet_check(p)) {
 				game->pacman.godMode = true;
 				game->pacman.originDt = ticks_game();
-				game->pacman_enemy.godMode = true;
+				//game->pacman_enemy.godMode = true;
 				game->pacman_enemy.originDt = ticks_game();
 
 			}
@@ -675,32 +675,34 @@ static void process_pellets2(PacmanGame2 *game)
 			//can only ever eat 1 pellet in a frame, so return
 			// return;
 		}
-		if (collides_obj(&game->pacman_enemy.body, p->x, p->y) && flag == false)
-		{
 
-			holder->numLeft--;
-			// printf("numLeft : %d\n", holder->numLeft);
-			p->eaten = true;
-			game->pacman_enemy.score += pellet_points(p);
-			if(pellet_check(p)) {
-				game->pacman.godMode = true;
-				game->pacman.originDt = ticks_game();
-				game->pacman_enemy.godMode = true;
-				game->pacman_enemy.originDt = ticks_game();
+		//chaser can't eat pellet
+		// if (collides_obj(&game->pacman_enemy.body, p->x, p->y) && flag == false)
+		// {
 
-			}
+		// 	holder->numLeft--;
+		// 	// printf("numLeft : %d\n", holder->numLeft);
+		// 	p->eaten = true;
+		// 	game->pacman_enemy.score += pellet_points(p);
+		// 	if(pellet_check(p)) {
+		// 		game->pacman.godMode = true;
+		// 		game->pacman.originDt = ticks_game();
+		// 		game->pacman_enemy.godMode = true;
+		// 		game->pacman_enemy.originDt = ticks_game();
 
-			//play eat sound
+		// 	}
+
+		// 	//play eat sound
 			
-			play_sound(SmallSound);
-			//eating a small pellet makes pacman not move for 1 frame
-			//eating a large pellet makes pacman not move for 3 frames
-			game->pacman.missedFrames = pellet_nop_frames(p);
-			game->pacman_enemy.missedFrames = pellet_nop_frames(p);
+		// 	play_sound(SmallSound);
+		// 	//eating a small pellet makes pacman not move for 1 frame
+		// 	//eating a large pellet makes pacman not move for 3 frames
+		// 	game->pacman.missedFrames = pellet_nop_frames(p);
+		// 	game->pacman_enemy.missedFrames = pellet_nop_frames(p);
 
-			//can only ever eat 1 pellet in a frame, so return
-			// return;
-		}
+		// 	//can only ever eat 1 pellet in a frame, so return
+		// 	// return;
+		// }
 	}
 	
 	//maybe next time, poor pacman

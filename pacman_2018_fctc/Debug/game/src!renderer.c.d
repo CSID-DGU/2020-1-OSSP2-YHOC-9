@@ -7,5 +7,5 @@ Debug/game/src!renderer.c.o: src/renderer.c src/renderer.h src/board.h \
  SDL/SDL_video.h SDL/SDL_joystick.h SDL/SDL_quit.h SDL/SDL_loadso.h \
  SDL/SDL_timer.h SDL/SDL_version.h SDL/SDL_image.h SDL/SDL.h src/item.h \
  src/ghost.h src/direction.h src/pacman.h src/physics.h src/pellet.h \
- src/text.h src/missile.h src/animation.h src/imageloader.h src/main.h \
- src/window.h src/game.h
+ src/text.h src/missile.h src/game2_chase.h src/main.h src/animation.h \
+ src/imageloader.h src/window.h src/game.h
