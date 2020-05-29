@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "board.h"
-#include "item.h"
+#include "item.h" 
 #include "ghost.h"
 #include "pacman.h"
 #include "pellet.h"
@@ -105,7 +105,7 @@ void draw_ghost(Ghost *ghost);
 bool draw_scared_ghost(Ghost *ghost, unsigned int timeGhostScared);
 void draw_eyes(Ghost *ghost);
 
-bool draw_scared_chaser(PacmanGame2 *pac, unsigned int dt);
+bool draw_scared_chaser(Pacman *chaser, unsigned int dt);
 
 void draw_missile(Missile *missile);
 //

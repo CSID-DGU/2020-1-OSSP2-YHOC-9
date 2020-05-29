@@ -8,7 +8,7 @@
 #include "text.h"
 #include "window.h"
 #include "game.h"
-#include "game2_chase.h"
+#include "game2_chase.h" 
 //draws an image at a board coordinate
 void draw_image_coord(SDL_Surface *surface, int x, int y);
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset);
@@ -578,7 +578,7 @@ bool draw_scared_ghost(Ghost *ghost, unsigned int dt)
 	return true;
 }
 
-bool draw_scared_chaser(PacmanGame2 *chaser, unsigned int dt)
+bool draw_scared_chaser(Pacman *chaser, unsigned int dt)
 {
 	//hangs on first image for 200ms
 	//cycles through rest of images at constant rate
@@ -600,11 +600,12 @@ bool draw_scared_chaser(PacmanGame2 *chaser, unsigned int dt)
 		return false;
 	}
 	//pac->pacman_enemy.body.x;
-	int x = chaser->pacman_enemy.body.x;
-	int y = chaser->pacman_enemy.body.y + Y_OFFSET;
+	int x = chaser->body.x;
+	int y = chaser->body.y + Y_OFFSET;
 
-	int xOffset = chaser->pacman_enemy.body.xOffset - 6;
-	int yOffset = chaser->pacman_enemy.body.yOffset - 6;
+	int xOffset = chaser->body.xOffset - 4;
+	int yOffset = chaser->body.yOffset - 4;
+
 	//printf("%d %d\n",xOffset,yOffset);
 	draw_image_coord_offset(image, x, y, xOffset, yOffset);
 	return true;
