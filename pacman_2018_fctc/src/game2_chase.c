@@ -184,7 +184,9 @@ void game_tick2(PacmanGame2 *game)
 }
 
 void game_render2(PacmanGame2 *game, int tick)
-{
+{	
+	draw_background();
+	
 	unsigned dt = tick - game->ticksSinceModeChange;
 	static unsigned godDt = 0;
 	static bool godChange = false;
