@@ -21,6 +21,10 @@ typedef struct
 
 //Class handles the drawing of all entities in the game
 
+
+
+//draw background img in game
+void draw_background();
 //
 // Vanity screen renderering
 //

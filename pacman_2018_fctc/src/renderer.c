@@ -23,12 +23,19 @@ void draw_image_coord(SDL_Surface *surface, int x, int y)
 	draw_image_coord_offset(surface, x, y, 0, 0);
 }
 
+
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset)
 {
 	int pixPerTile = 16;
 	apply_surface(pixPerTile * x + xOffset, pixPerTile * y + yOffset, surface);
 }
 
+
+//draw background image
+void draw_background(){
+	SDL_Surface * backIMG = get_background_image();
+	draw_image_coord(backIMG,0,0);
+}
 //
 //
 // Vanity screen rendering
