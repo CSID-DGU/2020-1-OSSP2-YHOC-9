@@ -5,4 +5,4 @@ Debug/game/src!window.c.o: src/window.c src/window.h SDL/SDL.h \
  SDL/SDL_cdrom.h SDL/SDL_cpuinfo.h SDL/SDL_events.h SDL/SDL_active.h \
  SDL/SDL_keyboard.h SDL/SDL_keysym.h SDL/SDL_mouse.h SDL/SDL_video.h \
  SDL/SDL_joystick.h SDL/SDL_quit.h SDL/SDL_loadso.h SDL/SDL_timer.h \
- SDL/SDL_version.h
+ SDL/SDL_version.h SDL/SDL_rotozoom.h SDL/SDL.h

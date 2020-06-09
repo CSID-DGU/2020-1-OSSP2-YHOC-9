@@ -8,7 +8,7 @@
 #include "text.h"
 #include "window.h"
 #include "game.h"
-
+#include "game2_chase.h" 
 //draws an image at a board coordinate
 void draw_image_coord(SDL_Surface *surface, int x, int y);
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset);
@@ -23,12 +23,19 @@ void draw_image_coord(SDL_Surface *surface, int x, int y)
 	draw_image_coord_offset(surface, x, y, 0, 0);
 }
 
+
 void draw_image_coord_offset(SDL_Surface *surface, int x, int y, int xOffset, int yOffset)
 {
 	int pixPerTile = 16;
 	apply_surface(pixPerTile * x + xOffset, pixPerTile * y + yOffset, surface);
 }
 
+
+//draw background image
+void draw_background(){
+	SDL_Surface * backIMG = get_background_image();
+	draw_image_coord(backIMG,0,0);
+}
 //
 //
 // Vanity screen rendering
@@ -577,6 +584,40 @@ bool draw_scared_ghost(Ghost *ghost, unsigned int dt)
 	draw_image_coord_offset(image, x, y, xOffset, yOffset);
 	return true;
 }
+
+bool draw_scared_chaser(Pacman *chaser, unsigned int dt)
+{
+	//hangs on first image for 200ms
+	//cycles through rest of images at constant rate
+	//hangs on "plop" image for a while
+
+	unsigned int perFrame = 1000;
+
+	int numFrames = 10;
+
+	SDL_Surface *image;
+
+	if(dt < numFrames * perFrame) {
+		if((dt/500) % 2 == 0){
+			image = scared_ghost_image(0);
+		} else {
+			image = scared_ghost_image(1);
+		}
+	} else {
+		return false;
+	}
+	//pac->pacman_enemy.body.x;
+	int x = chaser->body.x;
+	int y = chaser->body.y + Y_OFFSET;
+
+	int xOffset = chaser->body.xOffset - 4;
+	int yOffset = chaser->body.yOffset - 4;
+
+	//printf("%d %d\n",xOffset,yOffset);
+	draw_image_coord_offset(image, x, y, xOffset, yOffset);
+	return true;
+} 
+
 
 void draw_eyes(Ghost *ghost) {
 	//ghost dead

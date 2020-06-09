@@ -66,3 +66,5 @@ SDL_Surface* get_itemshow_image(Item item);
 
 SDL_Surface* get_ghost_score_image(int i);
 SDL_Surface* get_item_image(Item item);
+//add 2020
+SDL_Surface* get_background_image();
