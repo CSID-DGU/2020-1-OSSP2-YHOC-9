@@ -26,6 +26,7 @@ SDL_Surface* tright_image(DiagDirection direction);
 
 SDL_Surface* middle_image(Direction direction);
 SDL_Surface* hallway_image(Direction direction);
+SDL_Surface* fill_image(void);
 
 SDL_Surface* pen_corner_image(DiagDirection direction);
 SDL_Surface* pen_side_image(Direction direction);

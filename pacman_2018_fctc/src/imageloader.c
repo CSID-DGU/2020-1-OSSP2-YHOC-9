@@ -50,7 +50,7 @@ SDL_Surface *tleft_imgs[4];
 SDL_Surface *tright_imgs[4];
 SDL_Surface *middle_imgs[4];
 SDL_Surface *hallway_imgs[4];
-
+SDL_Surface *fill_imgs;
 //
 //pen sprites
 //
@@ -206,7 +206,9 @@ void load_board_images(void)
 
 	load_diags(pen_imgs, DIR MAP_DIR PEN_DIR "pen");
 	load_dirs(penSide_imgs, DIR MAP_DIR PEN_DIR "pen");
+	
 	penGate = load_image(DIR MAP_DIR PEN_DIR "pengate.png");
+	fill_imgs = load_image(DIR MAP_DIR "wall.png");
 }
 
 void dispose_board_images(void)
@@ -749,6 +751,10 @@ SDL_Surface* tright_image(DiagDirection direction)
 	return tright_imgs[direction];
 }
 
+SDL_Surface* fill_image(void){
+	return fill_imgs;
+}
+
 SDL_Surface* pen_corner_image(DiagDirection direction)
 {
 	return pen_imgs[direction];
@@ -758,6 +764,8 @@ SDL_Surface* pen_side_image(Direction direction)
 {
 	return penSide_imgs[direction];
 }
+
+
 
 SDL_Surface* pen_gate_image(void)
 {

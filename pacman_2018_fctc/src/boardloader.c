@@ -102,6 +102,7 @@ void load_board(Board *board, PelletHolder *pelletHolder, const char* file)
 				walkable = true;
 				break;
 			case ' ': //empty, nonwalkable square
+				image = fill_image();
 				walkable = false;
 				break;
 			default:
