@@ -102,8 +102,12 @@ int connect_server(Socket_value *socket_info) {
 		//accept successly
 		else{
 			printf("Server : Connect successfuly\n");
+			//check ip and start 
+			char ip[50] = {'\0',};
+			inet_ntop(AF_INET,(struct sockaddr *)&socket_info->client_addr, ip,INET_ADDRSTRLEN);
+			
 			recv(socket_info->client_fd,server_msg,sizeof(int),MSG_WAITALL);
-			printf("%d\n",server_msg[0]);
+			printf("client address : %s , %d\n",ip,server_msg[0]);
 			send(socket_info->client_fd,&socket_info->gameMode,sizeof(int),0);
 			return 0;
 		}
