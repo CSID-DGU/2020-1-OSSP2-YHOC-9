@@ -8,4 +8,4 @@ Debug/game/src!menu.c.o: src/menu.c src/menu.h src/main.h src/socket.h \
  SDL/SDL_timer.h SDL/SDL_version.h SDL/SDL_keysym.h src/input.h \
  src/direction.h src/ghost.h src/board.h SDL/SDL_image.h SDL/SDL.h \
  src/pacman.h src/physics.h src/renderer.h src/item.h src/pellet.h \
- src/text.h src/missile.h
+ src/text.h src/missile.h src/game2_chase.h

@@ -26,6 +26,7 @@ SDL_Surface* tright_image(DiagDirection direction);
 
 SDL_Surface* middle_image(Direction direction);
 SDL_Surface* hallway_image(Direction direction);
+SDL_Surface* fill_image(void);
 
 SDL_Surface* pen_corner_image(DiagDirection direction);
 SDL_Surface* pen_side_image(Direction direction);
@@ -66,3 +67,5 @@ SDL_Surface* get_itemshow_image(Item item);
 
 SDL_Surface* get_ghost_score_image(int i);
 SDL_Surface* get_item_image(Item item);
+//add 2020
+SDL_Surface* get_background_image();

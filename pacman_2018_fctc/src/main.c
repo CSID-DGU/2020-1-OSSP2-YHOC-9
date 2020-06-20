@@ -685,6 +685,10 @@ static void process_events(Player player)
 			case SDL_VIDEORESIZE:
 				{
 					dispose_window();
+					if(event.resize.w < SCREEN_WIDTH)
+						event.resize.w = SCREEN_WIDTH;
+					if(event.resize.h < SCREEN_HEIGHT)
+						event.resize.h = SCREEN_HEIGHT;
 					screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE | SDL_RESIZABLE);
 					scr_temp_rec.w = event.resize.w;
 					scr_temp_rec.h = event.resize.h;

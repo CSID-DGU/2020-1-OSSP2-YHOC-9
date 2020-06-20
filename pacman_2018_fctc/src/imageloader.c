@@ -50,7 +50,7 @@ SDL_Surface *tleft_imgs[4];
 SDL_Surface *tright_imgs[4];
 SDL_Surface *middle_imgs[4];
 SDL_Surface *hallway_imgs[4];
-
+SDL_Surface *fill_imgs;
 //
 //pen sprites
 //
@@ -125,6 +125,9 @@ SDL_Surface *ghostmodeImage;
 SDL_Surface *lifeImage;
 SDL_Surface *profImage;
 
+//backgounr image
+SDL_Surface *backgroundImage;
+
 void load_board_images(void);
 void load_pacman_images(void);
 void load_pacman_player2_images(void);
@@ -154,6 +157,7 @@ void load_images(void)
 	load_misc_images();
 	load_char_images();
 	load_item_images();
+	load_background_image();
 }
 
 void dispose_images(void)
@@ -190,6 +194,7 @@ void load_dirs(SDL_Surface *images[4], const char *file)
 	}
 }
 
+
 void load_board_images(void)
 {
 	load_diags(double_corner_imgs, DIR MAP_DIR "doublecorner");
@@ -201,7 +206,9 @@ void load_board_images(void)
 
 	load_diags(pen_imgs, DIR MAP_DIR PEN_DIR "pen");
 	load_dirs(penSide_imgs, DIR MAP_DIR PEN_DIR "pen");
+	
 	penGate = load_image(DIR MAP_DIR PEN_DIR "pengate.png");
+	fill_imgs = load_image(DIR MAP_DIR "wall.png");
 }
 
 void dispose_board_images(void)
@@ -218,6 +225,10 @@ void dispose_board_images(void)
 	}
 
 	SDL_FreeSurface(penGate);
+}
+
+void load_background_image(void){
+	backgroundImage = load_image(DIR "background.jpg");
 }
 
 void load_pacman_images(void)
@@ -740,6 +751,10 @@ SDL_Surface* tright_image(DiagDirection direction)
 	return tright_imgs[direction];
 }
 
+SDL_Surface* fill_image(void){
+	return fill_imgs;
+}
+
 SDL_Surface* pen_corner_image(DiagDirection direction)
 {
 	return pen_imgs[direction];
@@ -749,6 +764,8 @@ SDL_Surface* pen_side_image(Direction direction)
 {
 	return penSide_imgs[direction];
 }
+
+
 
 SDL_Surface* pen_gate_image(void)
 {
@@ -1008,4 +1025,8 @@ SDL_Surface* get_ghost_score_image(int i)
 	}
 
 	return ghostPoints[i];
+}
+
+SDL_Surface* get_background_image(){
+	return backgroundImage;
 }

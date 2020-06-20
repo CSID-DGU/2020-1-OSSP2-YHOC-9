@@ -3,13 +3,13 @@
 #include <stdbool.h>
 
 #include "board.h"
-#include "item.h"
+#include "item.h" 
 #include "ghost.h"
 #include "pacman.h"
 #include "pellet.h"
 #include "text.h"
 #include "missile.h"
-
+#include "game2_chase.h"
 //Holds data relating to a single rendered ghost-row.
 typedef struct
 {
@@ -21,6 +21,10 @@ typedef struct
 
 //Class handles the drawing of all entities in the game
 
+
+
+//draw background img in game
+void draw_background();
 //
 // Vanity screen renderering
 //
@@ -104,6 +108,8 @@ void draw_pacman2_lives(int numLives);
 void draw_ghost(Ghost *ghost);
 bool draw_scared_ghost(Ghost *ghost, unsigned int timeGhostScared);
 void draw_eyes(Ghost *ghost);
+
+bool draw_scared_chaser(Pacman *chaser, unsigned int dt);
 
 void draw_missile(Missile *missile);
 //
