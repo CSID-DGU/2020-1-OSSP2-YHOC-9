@@ -1,0 +1,6 @@
+game_Debug
+/pacman_2018_fctc/Debug/
+*.o
+*.d
+/.metadata/
+/.vscode/
